@@ -22,12 +22,28 @@
     <groupId>uk.co.boundedbuffer</groupId>
     <artifactId>low-latency-primitive-concurrent-queues</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <description>Low Latency Primitive Concurrent Queues</description>
+
+    <packaging>pom</packaging>
+    <name>Low Latency Primitive Concurrent Queues</name>
+
+    <description>
+        An low latency, lock free, primitive bounded blocking queue backed by an int[].
+        This class mimics the interface of {@linkplain java.util.concurrent.BlockingQueue BlockingQueue},
+        however works with primitive ints rather than objects, so is unable to actually implement the
+        BlockingQueue .
+
+        This class takes advantage of the Unsafe.putOrderedObject, which allows us to create non-blocking code with
+        guaranteed writes.
+        These writes will not be re-orderd by instruction reordering. Under the covers it uses the faster store-store
+        barrier, rather than the the slower store-load barrier, which is used when doing a volatile write.
+        One of the trade off with this improved performance is we are limited to a single producer, single consumer.
+    </description>
 
 
     <scm>
         <connection>scm:git:https://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues</connection>
-        <developerConnection>scm:git::git@github.com:BoundedBuffer/low-latency-primitive-concurrent-queues</developerConnection>
+        <developerConnection>scm:git::git@github.com:BoundedBuffer/low-latency-primitive-concurrent-queues
+        </developerConnection>
         <url>https://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues</url>
         <tag>master</tag>
     </scm>
@@ -43,6 +59,7 @@
 
 
     <url>http://www.boundedbuffer.co.uk</url>
+
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
