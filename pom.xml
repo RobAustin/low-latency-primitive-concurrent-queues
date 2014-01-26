@@ -41,10 +41,10 @@
 
 
     <scm>
-        <connection>scm:git:https://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues</connection>
-        <developerConnection>scm:git::git@github.com:BoundedBuffer/low-latency-primitive-concurrent-queues
+        <connection>scm:git:git@github.com:BoundedBuffer/low-latency-primitive-concurrent-queues</connection>
+        <developerConnection>scm:git:git@github.com:BoundedBuffer/low-latency-primitive-concurrent-queues
         </developerConnection>
-        <url>https://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues</url>
+        <url>git@github.com:BoundedBuffer/low-latency-primitive-concurrent-queues</url>
         <tag>master</tag>
     </scm>
 
