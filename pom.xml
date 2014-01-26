@@ -71,7 +71,7 @@
                 <configuration>
                     <aggregate>true</aggregate>
                     <show>public</show>
-                    <includeDependencySources>true</includeDependencySources>
+                    <includeDependencySources>false</includeDependencySources>
                     <nohelp>true</nohelp>
                     <header>ConcurrentBlockingIntQueue, ${project.version}</header>
                     <footer>ConcurrentBlockingIntQueue, ${project.version}</footer>
