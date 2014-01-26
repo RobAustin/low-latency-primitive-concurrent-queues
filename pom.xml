@@ -22,7 +22,7 @@
     <groupId>uk.co.boundedbuffer</groupId>
     <artifactId>low-latency-primitive-concurrent-queues</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <description>Low latency primitive concurrent queues</description>
+    <description>Low Latency Primitive Concurrent Queues</description>
 
 
     <scm>
