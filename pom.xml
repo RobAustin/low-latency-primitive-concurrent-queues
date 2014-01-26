@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2014 Rob Austin
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>uk.co.boundedbuffer</groupId>
+    <artifactId>low-latency-primitive-concurrent-queues</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <description>Low latency primitive concurrent queues</description>
+
+
+    <scm>
+        <connection>scm:git:https://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues.git</connection>
+        <developerConnection>scm:git:://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues.git</developerConnection>
+        <url>https://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues.git</url>
+        <tag>master</tag>
+    </scm>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>1.9.5</version>
+        </dependency>
+    </dependencies>
+
+
+    <url>http://www.boundedbuffer.co.uk</url>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Rob Austin</name>
+            <email>robaustin123@googlemail.com</email>
+        </developer>
+    </developers>
+
+
+    <build>
+
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <configuration>
+                    <aggregate>true</aggregate>
+                    <show>public</show>
+                    <includeDependencySources>true</includeDependencySources>
+                    <nohelp>true</nohelp>
+                    <header>ConcurrentBlockingIntQueue, ${project.version}</header>
+                    <footer>ConcurrentBlockingIntQueue, ${project.version}</footer>
+                    <doctitle>ConcurrentBlockingIntQueue, ${project.version}</doctitle>
+                    <links>
+                        <link>http://static.springsource.org/spring/docs/3.0.x/javadoc-api/</link>
+                    </links>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-scm-publish-plugin</artifactId>
+                <version>1.0-beta-2</version>
+                <configuration>
+                    <checkoutDirectory>${project.build.directory}/scmpublish</checkoutDirectory>
+                    <checkinComment>Publishing javadoc for ${project.artifactId}:${project.version}</checkinComment>
+                    <content>${project.reporting.outputDirectory}/apidocs</content>
+                    <skipDeletedFiles>true</skipDeletedFiles>
+                    <pubScmUrl>scm:git:github.com/BoundedBuffer/low-latency-primitive-concurrent-queues.git</pubScmUrl>
+                    <scmBranch>gh-pages</scmBranch>
+                </configuration>
+            </plugin>
+
+        </plugins>
+
+    </build>
+
+</project>
