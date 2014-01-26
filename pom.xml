@@ -26,9 +26,9 @@
 
 
     <scm>
-        <connection>scm:git:https://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues.git</connection>
-        <developerConnection>scm:git:://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues.git</developerConnection>
-        <url>https://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues.git</url>
+        <connection>scm:git:https://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues</connection>
+        <developerConnection>scm:git:://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues</developerConnection>
+        <url>https://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues</url>
         <tag>master</tag>
     </scm>
 
@@ -55,7 +55,7 @@
     <developers>
         <developer>
             <name>Rob Austin</name>
-            <email>robaustin123@googlemail.com</email>
+            <email>rob.austin@boundedbuffer.com</email>
         </developer>
     </developers>
 
@@ -90,7 +90,7 @@
                     <checkinComment>Publishing javadoc for ${project.artifactId}:${project.version}</checkinComment>
                     <content>${project.reporting.outputDirectory}/apidocs</content>
                     <skipDeletedFiles>true</skipDeletedFiles>
-                    <pubScmUrl>scm:git:github.com/BoundedBuffer/low-latency-primitive-concurrent-queues.git</pubScmUrl>
+                    <pubScmUrl>scm:git:https://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues</pubScmUrl>
                     <scmBranch>gh-pages</scmBranch>
                 </configuration>
             </plugin>
