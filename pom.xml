@@ -26,8 +26,8 @@
 
 
     <scm>
-        <connection>scm:git:https://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues</connection>
-        <developerConnection>scm:git:://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues</developerConnection>
+        <connection>scm:git:git@github.com/BoundedBuffer/low-latency-primitive-concurrent-queues</connection>
+        <developerConnection>scm:git::git@github.com:BoundedBuffer/low-latency-primitive-concurrent-queues</developerConnection>
         <url>https://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues</url>
         <tag>master</tag>
     </scm>
@@ -90,7 +90,7 @@
                     <checkinComment>Publishing javadoc for ${project.artifactId}:${project.version}</checkinComment>
                     <content>${project.reporting.outputDirectory}/apidocs</content>
                     <skipDeletedFiles>true</skipDeletedFiles>
-                    <pubScmUrl>scm:git:https://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues</pubScmUrl>
+                    <pubScmUrl>scm:git:git@github.com:BoundedBuffer/low-latency-primitive-concurrent-queues</pubScmUrl>
                     <scmBranch>gh-pages</scmBranch>
                 </configuration>
             </plugin>
