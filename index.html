@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Low-latency-primitive-concurrent-queues by BoundedBuffer</title>
+    <title>Low Latency Primitive Concurrent Queues by BoundedBuffer</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
@@ -15,7 +15,7 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1>Low-latency-primitive-concurrent-queues</h1>
+        <h1>Low Latency Primitive Concurrent Queues</h1>
         <p>A low latency, lock free, primitive bounded blocking queue backed by an int[]. This class mimics the interface of BlockingQueue, however works with primitive ints rather than Objects, so is unable to actually implement the BlockingQueue.  Takes advantage of the Unsafe.putOrderedObject, which allows us to create non-blocking code with guaranteed writes. These writes will not be re-orderd by instruction reordering. Under the covers it uses the faster store-store barrier, rather than the the slower store-load barrier, which is used when doing a volatile write. One of the trade off with this improved performance is we are limited to a single producer, single consumer. </p>
 
         <p class="view"><a href="https://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues">View the Project on GitHub <small>BoundedBuffer/low-latency-primitive-concurrent-queues</small></a></p>
