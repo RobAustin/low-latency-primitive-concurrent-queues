@@ -82,7 +82,7 @@ import java.util.concurrent.TimeoutException;
  * <tt>remove(x)</tt>. As this operation would not performed very efficiently.
  * <p/>
  * <p>All of <tt>uk.co.boundedbuffer.ConcurrentBlockingIntQueue</tt> methods are thread-safe when used with a single producer and single consumer, internal atomicity
- * is archived using lock free strategies, such as sping locks.
+ * is achieved using lock free strategies, such as sping locks.
  * <p/>
  * <p>Like a <tt>BlockingQueue</tt>, the uk.co.boundedbuffer.ConcurrentBlockingIntQueue does <em>not</em> intrinsically support
  * any kind of &quot;close&quot; or &quot;shutdown&quot; operation to
