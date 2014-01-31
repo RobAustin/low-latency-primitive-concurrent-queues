@@ -104,7 +104,7 @@
                 <configuration>
                     <checkoutDirectory>${project.build.directory}/scmpublish/javadoc</checkoutDirectory>
                     <checkinComment>Publishing javadoc for ${project.artifactId}:${project.version}</checkinComment>
-                    <content>${project.reporting.outputDirectory}/apidocs</content>
+                    <content>${project.reporting.outputDirectory}</content>
                     <skipDeletedFiles>true</skipDeletedFiles>
                     <pubScmUrl>scm:git:git@github.com:BoundedBuffer/low-latency-primitive-concurrent-queues</pubScmUrl>
                     <scmBranch>gh-pages</scmBranch>
