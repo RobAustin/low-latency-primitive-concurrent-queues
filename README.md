@@ -3,6 +3,7 @@
 An example of how to use on of our low latency bounded queues.
 
 ```
+
 // writer thread
 Executors.newSingleThreadExecutor().execute(new Runnable() {
     @Override
@@ -10,7 +11,6 @@ Executors.newSingleThreadExecutor().execute(new Runnable() {
         queue.add(1);
     }
 });
-
 
 // reader thread
 Executors.newSingleThreadExecutor().execute(new Runnable() {
@@ -20,6 +20,7 @@ Executors.newSingleThreadExecutor().execute(new Runnable() {
 
     }
 });
+
 ```
 
 ### JavaDoc
