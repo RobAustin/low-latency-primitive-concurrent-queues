@@ -102,7 +102,7 @@
                 <artifactId>maven-scm-publish-plugin</artifactId>
                 <version>1.0-beta-2</version>
                 <configuration>
-                    <checkoutDirectory>${project.build.directory}/scmpublish</checkoutDirectory>
+                    <checkoutDirectory>${project.build.directory}/scmpublish/javadoc</checkoutDirectory>
                     <checkinComment>Publishing javadoc for ${project.artifactId}:${project.version}</checkinComment>
                     <content>${project.reporting.outputDirectory}/apidocs</content>
                     <skipDeletedFiles>true</skipDeletedFiles>
