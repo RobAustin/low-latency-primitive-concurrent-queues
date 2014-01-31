@@ -7,7 +7,8 @@ An example of how to use on of our low latency bounded queues.
 ```
 
 ### JavaDoc
-Having trouble ? Check out the documentation at : http://boundedbuffer.github.io/low-latency-primitive-concurrent-queues/apidocs/
+Having trouble ? Check out our documentation at :
+http://boundedbuffer.github.io/low-latency-primitive-concurrent-queues/apidocs/
 
 
 ### Contributors
