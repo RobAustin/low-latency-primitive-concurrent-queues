@@ -15,3 +15,8 @@ Contributors are extremely welcome, just fork this project, make your changes, a
 
 ### Support or Contact
 Having Problems ? Contact support@boundedbuffer.com and we’ll help you sort it out.
+
+### Licence
+[Apache v2](http://www.apache.org/licenses/LICENSE-2.0.html)
+
+
