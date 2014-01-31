@@ -3,23 +3,23 @@
 An example of how to use on of our low latency bounded queues.
 
 ```
-        // writer thread
-        Executors.newSingleThreadExecutor().execute(new Runnable() {
-            @Override
-            public void run() {
-                queue.add(1);
-            }
-        });
+// writer thread
+Executors.newSingleThreadExecutor().execute(new Runnable() {
+    @Override
+    public void run() {
+        queue.add(1);
+    }
+});
 
 
-        // reader thread
-        Executors.newSingleThreadExecutor().execute(new Runnable() {
-            @Override
-            public void run() {
-                final int value = queue.take();
+// reader thread
+Executors.newSingleThreadExecutor().execute(new Runnable() {
+    @Override
+    public void run() {
+        final int value = queue.take();
 
-            }
-        });
+    }
+});
 ```
 
 ### JavaDoc
