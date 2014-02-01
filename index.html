@@ -47,29 +47,21 @@ Executors.newSingleThreadExecutor().execute(new Runnable() {
     @Override
     public void run() {
         final int value = queue.take();
-
     }
 });
 
 </code></pre>
 
 <h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
-
-<p>Having Problems ? Contact <a href="mailto:support@boundedbuffer.com">support@boundedbuffer.com</a> and we’ll help you sort it out.</p>
-
-<h3>
 <a name="maven-central" class="anchor" href="#maven-central"><span class="octicon octicon-link"></span></a>Maven Central</h3>
 
-<p>We are hosted at <a href="http://http://search.maven.org">Maven Central</a></p>
+<p>We are hosted at <a href="http://http://search.maven.org">Maven Central</a>, one of the quickest ways to get up and running is to add this <a href="http://maven.apache.org/what-is-maven.html">maven</a> dependency to your pom file :</p>
 
-<pre><code>
-&lt;dependency&gt;
+<pre><code>&lt;dependency&gt;
     &lt;groupId&gt;uk.co.boundedbuffer&lt;/groupId&gt;
     &lt;artifactId&gt;low-latency-primitive-concurrent-queues&lt;/artifactId&gt;
     &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
 &lt;dependency&gt;
-
 </code></pre>
 
 <h3>
@@ -83,7 +75,7 @@ Executors.newSingleThreadExecutor().execute(new Runnable() {
 <p>Yes we are thread safe, but you are limited to using just two threads per queue instance, One producer thread and a consumer thread.</p>
 
 <h3>
-<a name="why-are-we-limited-to-only-using-threads-" class="anchor" href="#why-are-we-limited-to-only-using-threads-"><span class="octicon octicon-link"></span></a>Why are we limited to only using threads ?</h3>
+<a name="why-am-i-limited-to-only-using-just-two-threads-" class="anchor" href="#why-am-i-limited-to-only-using-just-two-threads-"><span class="octicon octicon-link"></span></a>Why am I limited to only using just two threads ?</h3>
 
 <p>They queues take advantage of the Unsafe.putOrdered, which provides of non-blocking code with guaranteed writes.
 These writes will not be re-ordered by instruction reordering, they use a faster store-store barrier, rather than the the slower store-load barrie ( which is used when doing a volatile write ). One of the trade offs with this improved performance is the visibility of the reads and writes between cores.</p>
@@ -97,6 +89,11 @@ These writes will not be re-ordered by instruction reordering, they use a faster
 <a name="contributors" class="anchor" href="#contributors"><span class="octicon octicon-link"></span></a>Contributors</h3>
 
 <p>Contributors are extremely welcome, just fork this project, make your changes, and we'd be happy to review your pull-request.</p>
+
+<h3>
+<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+
+<p>Having Problems ? Contact <a href="mailto:support@boundedbuffer.com">support@boundedbuffer.com</a> and we’ll help you sort it out.</p>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/BoundedBuffer">BoundedBuffer</a></p>
