@@ -23,9 +23,21 @@ Executors.newSingleThreadExecutor().execute(new Runnable() {
 
 ```
 
+### Maven Central
+We are hosted at [Maven Central] (http://http://search.maven.org)
+
+```
+
+<dependency>
+    <groupId>uk.co.boundedbuffer</groupId>
+    <artifactId>low-latency-primitive-concurrent-queues</artifactId>
+    <version>1.0-SNAPSHOT</version>
+<dependency>
+
+```
+
 ### JavaDoc
-Having trouble ? Check out our documentation at :
-http://boundedbuffer.github.io/low-latency-primitive-concurrent-queues/apidocs/
+Having trouble ? Check out our documentation at [JavaDoc] (http://boundedbuffer.github.io/low-latency-primitive-concurrent-queues/apidocs/)
 
 
 ### Contributors
