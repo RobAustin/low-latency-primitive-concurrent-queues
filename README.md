@@ -42,7 +42,7 @@ Yes we are thread safe, but you are limited to using just two threads per queue 
 
 ### Why am I limited to only using just two threads ?
 
-They queues take advantage of the Unsafe.putOrdered<X>, which provides of non-blocking code with guaranteed writes.
+The queues take advantage of the Unsafe.putOrderedX(), which provides of non-blocking code with guaranteed writes.
 These writes will not be re-ordered by instruction reordering, they use a faster store-store barrier, rather than the the slower store-load barrie ( which is used when doing a volatile write ). One of the trade offs with this improved performance is the visibility of the reads and writes between cores.
 
 ### Licence
