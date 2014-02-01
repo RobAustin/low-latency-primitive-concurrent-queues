@@ -30,7 +30,7 @@
         An low latency, lock free, primitive bounded blocking queue backed by an int[].
         This class mimics the interface of {@linkplain java.util.concurrent.BlockingQueue BlockingQueue},
         however works with primitive ints rather than objects, so is unable to actually implement the
-        BlockingQueue .
+        BlockingQueue.
 
         This class takes advantage of the Unsafe.putOrderedObject, which allows us to create non-blocking code with
         guaranteed writes.
@@ -66,11 +66,29 @@
             <artifactId>mockito-core</artifactId>
             <version>1.9.5</version>
         </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.8.2</version>
+            <scope>test</scope>
         </dependency>
+
+
+        <dependency>
+            <groupId>com.sun.japex</groupId>
+            <artifactId>japex-maven-plugin</artifactId>
+            <version>1.2.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.japex</groupId>
+            <artifactId>japex</artifactId>
+            <version>1.2.4</version>
+            <scope>test</scope>
+        </dependency>
+
+
     </dependencies>
 
     <url>http://www.boundedbuffer.co.uk</url>
@@ -94,12 +112,43 @@
 
     <build>
 
+        <pluginManagement>
+            <plugins>
+
+                <plugin>
+                    <groupId>com.sun.japex</groupId>
+                    <artifactId>japex-maven-plugin</artifactId>
+                    <version>1.2-SNAPSHOT</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>1.4</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.9.1</version>
+                </plugin>
+
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-scm-publish-plugin</artifactId>
+                    <version>1.0-beta-2</version>
+                </plugin>
+
+
+            </plugins>
+        </pluginManagement>
+
         <plugins>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
                 <configuration>
                     <aggregate>true</aggregate>
                     <show>public</show>
@@ -116,7 +165,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-scm-publish-plugin</artifactId>
-                <version>1.0-beta-2</version>
                 <configuration>
                     <checkoutDirectory>${project.build.directory}/scmpublish/javadoc</checkoutDirectory>
                     <checkinComment>Publishing javadoc for ${project.artifactId}:${project.version}</checkinComment>
@@ -130,7 +178,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.4</version>
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
@@ -142,8 +189,42 @@
                 </executions>
             </plugin>
 
-        </plugins>
+            <plugin>
 
+                <groupId>com.sun.japex</groupId>
+                <artifactId>japex-maven-plugin</artifactId>
+                <version>1.2.4</version>
+                <executions>
+                    <execution>
+                        <id>japex</id>
+                        <goals>
+                            <goal>japex</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <japexConfig>
+                        <testSuite name="ParsingPerformance" xmlns="http://www.sun.com/japex/testSuite">
+                            <param name="japex.namedClassPath" value="maven.test.classpath"/>
+                            <param name="japex.resultUnit" value="ms"/>
+                            <param name="japex.warmupIterations" value="0"/>
+                            <param name="japex.runIterations" value="40"/>
+                            <driver name="MemoryUsage1K">
+                                <param name="japex.driverClass" value="MemoryUsage1K"/>
+                                <param name="description" value="Memory usage sample class"/>
+                            </driver>
+                            <driver name="MemoryUsage10K">
+                                <param name="japex.driverClass" value="MemoryUsage10K"/>
+                                <param name="description" value="Memory usage sample class"/>
+                            </driver>
+                            <testCase name="test1"/>
+                            <testCase name="test2"/>
+                            <testCase name="test3"/>
+                        </testSuite>
+                    </japexConfig>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 
 
