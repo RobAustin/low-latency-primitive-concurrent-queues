@@ -17,7 +17,6 @@ Executors.newSingleThreadExecutor().execute(new Runnable() {
     @Override
     public void run() {
         final int value = queue.take();
-
     }
 });
 
@@ -27,16 +26,14 @@ Executors.newSingleThreadExecutor().execute(new Runnable() {
 Having Problems ? Contact support@boundedbuffer.com and we’ll help you sort it out.
 
 ### Maven Central
-We are hosted at [Maven Central] (http://http://search.maven.org)
+We are hosted at [Maven Central] (http://http://search.maven.org), one of the quickest ways to get up and running is to add this [maven](http://maven.apache.org/what-is-maven.html) dependency to your pom file :
 
 ```
-
 <dependency>
     <groupId>uk.co.boundedbuffer</groupId>
     <artifactId>low-latency-primitive-concurrent-queues</artifactId>
     <version>1.0-SNAPSHOT</version>
 <dependency>
-
 ```
 
 ### JavaDoc
@@ -46,7 +43,7 @@ Having trouble ? Check out our documentation at [JavaDoc] (http://boundedbuffer.
 
 Yes we are thread safe, but you are limited to using just two threads per queue instance, One producer thread and a consumer thread.
 
-### Why are we limited to only using threads ?
+### Why am I limited to only using just two threads ?
 
 They queues take advantage of the Unsafe.putOrdered<X>, which provides of non-blocking code with guaranteed writes.
 These writes will not be re-ordered by instruction reordering, they use a faster store-store barrier, rather than the the slower store-load barrie ( which is used when doing a volatile write ). One of the trade offs with this improved performance is the visibility of the reads and writes between cores.
