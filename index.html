@@ -16,7 +16,7 @@
     <div class="wrapper">
       <header>
         <h1>Low Latency Primitive Concurrent Queues</h1>
-        <p>Low latency, lock free, primitive bounded blocking queues backed by an primitive arrays such as an int[]. These classes mimic the interface of BlockingQueue, they work with primitives rather than Objects so are unable to actually implement the BlockingQueue. They take advantage of the Unsafe.putOrdered&lt;X&gt;, which allows the creation of non-blocking code with guaranteed writes. These writes will not be re-orderd by instruction reordering. Under the covers they use a faster store-store barrier, rather than the the slower store-load barrier, which is used when doing a volatile write. One of the trade offs with this improved performance, is to maintain thread safety, we are limited to using just two threads, one producer thread and a consumer thread.</p>
+        <p>Low latency, lock free, primitive bounded blocking queues backed by an primitive arrays such as an int[]. These classes mimic the interface of BlockingQueue, To reduce auto boxing in your code, they work with primitives rather than Objects and as such, are unable to actually implement the BlockingQueue. </p>
 
         <p class="view"><a href="https://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues">View the Project on GitHub <small>BoundedBuffer/low-latency-primitive-concurrent-queues</small></a></p>
 
@@ -33,23 +33,70 @@
 
 <p>An example of how to use on of our low latency bounded queues.</p>
 
-<pre><code>// todo
+<pre><code>
+// writer thread
+Executors.newSingleThreadExecutor().execute(new Runnable() {
+    @Override
+    public void run() {
+        queue.add(1);
+    }
+});
+
+// reader thread
+Executors.newSingleThreadExecutor().execute(new Runnable() {
+    @Override
+    public void run() {
+        final int value = queue.take();
+
+    }
+});
+
 </code></pre>
-
-<h3>
-<a name="javadoc" class="anchor" href="#javadoc"><span class="octicon octicon-link"></span></a>JavaDoc</h3>
-
-<p>Having trouble ? Check out the documentation at : <a href="http://boundedbuffer.github.io/low-latency-primitive-concurrent-queues/apidocs/">http://boundedbuffer.github.io/low-latency-primitive-concurrent-queues/apidocs/</a></p>
-
-<h3>
-<a name="contributors" class="anchor" href="#contributors"><span class="octicon octicon-link"></span></a>Contributors</h3>
-
-<p>Contributors are extremely welcome, just fork this project, make your changes, and we'd be happy to review your pull-request.</p>
 
 <h3>
 <a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
 
 <p>Having Problems ? Contact <a href="mailto:support@boundedbuffer.com">support@boundedbuffer.com</a> and we’ll help you sort it out.</p>
+
+<h3>
+<a name="maven-central" class="anchor" href="#maven-central"><span class="octicon octicon-link"></span></a>Maven Central</h3>
+
+<p>We are hosted at <a href="http://http://search.maven.org">Maven Central</a></p>
+
+<pre><code>
+&lt;dependency&gt;
+    &lt;groupId&gt;uk.co.boundedbuffer&lt;/groupId&gt;
+    &lt;artifactId&gt;low-latency-primitive-concurrent-queues&lt;/artifactId&gt;
+    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+&lt;dependency&gt;
+
+</code></pre>
+
+<h3>
+<a name="javadoc" class="anchor" href="#javadoc"><span class="octicon octicon-link"></span></a>JavaDoc</h3>
+
+<p>Having trouble ? Check out our documentation at <a href="http://boundedbuffer.github.io/low-latency-primitive-concurrent-queues/apidocs/">JavaDoc</a></p>
+
+<h3>
+<a name="is-this-queue-thread-safe-" class="anchor" href="#is-this-queue-thread-safe-"><span class="octicon octicon-link"></span></a>Is this Queue Thread Safe ?</h3>
+
+<p>Yes we are thread safe, but you are limited to using just two threads per queue instance, One producer thread and a consumer thread.</p>
+
+<h3>
+<a name="why-are-we-limited-to-only-using-threads-" class="anchor" href="#why-are-we-limited-to-only-using-threads-"><span class="octicon octicon-link"></span></a>Why are we limited to only using threads ?</h3>
+
+<p>They queues take advantage of the Unsafe.putOrdered, which provides of non-blocking code with guaranteed writes.
+These writes will not be re-ordered by instruction reordering, they use a faster store-store barrier, rather than the the slower store-load barrie ( which is used when doing a volatile write ). One of the trade offs with this improved performance is the visibility of the reads and writes between cores.</p>
+
+<h3>
+<a name="licence" class="anchor" href="#licence"><span class="octicon octicon-link"></span></a>Licence</h3>
+
+<p><a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache v2</a></p>
+
+<h3>
+<a name="contributors" class="anchor" href="#contributors"><span class="octicon octicon-link"></span></a>Contributors</h3>
+
+<p>Contributors are extremely welcome, just fork this project, make your changes, and we'd be happy to review your pull-request.</p>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/BoundedBuffer">BoundedBuffer</a></p>
