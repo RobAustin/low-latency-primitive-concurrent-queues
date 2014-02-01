@@ -23,7 +23,7 @@ Executors.newSingleThreadExecutor().execute(new Runnable() {
 ```
 
 ### Maven Central
-We are hosted at [Maven Central] (http://http://search.maven.org), one of the quickest ways to get up and running is to add this [maven](http://maven.apache.org/what-is-maven.html) dependency to your pom file :
+We are hosted at [Maven Central] (http://search.maven.org), one of the quickest ways to get up and running is to add this [Maven](http://maven.apache.org/what-is-maven.html) dependency to your pom file :
 
 ```
 <dependency>
