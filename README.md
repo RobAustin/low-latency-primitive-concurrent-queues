@@ -59,6 +59,6 @@ Having Problems ? Contact support@boundedbuffer.com and we’ll help you sort it
 
 
 ### Blog
-If you are interest in java especially around low latency, see  [http://robsjava.blogspot.co.uk] (http://robsjava.blogspot.co.uk)
+If you are interest in Java, especially around low latency, see  [http://robsjava.blogspot.co.uk] (http://robsjava.blogspot.co.uk)
 
 
