@@ -57,8 +57,7 @@ Contributors are extremely welcome, just fork this project, make your changes, a
 ### Support or Contact
 Having Problems ? Contact support@boundedbuffer.com and we’ll help you sort it out.
 
-
 ### Blog
-If you are interest in Java, especially around low latency, see  [http://robsjava.blogspot.co.uk] (http://robsjava.blogspot.co.uk)
+If you are interest in low latency java, see my blog at [http://robsjava.blogspot.co.uk] (http://robsjava.blogspot.co.uk)
 
 
