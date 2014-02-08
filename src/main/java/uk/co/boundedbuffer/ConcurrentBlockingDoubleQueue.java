@@ -9,7 +9,7 @@ import java.util.concurrent.TimeoutException;
  * however works with primitive doubles rather than {@link Object}s, so is unable to actually implement the BlockingQueue .
  * <p/>
  * This class takes advantage of the Unsafe.putOrderedInt, which allows us to create non-blocking code with guaranteed writes.
- * These writes will not be re-orderd by instruction reordering. Under the covers it uses the faster store-store barrier, rather than the the slower store-load barrier, which is used when doing a volatile write.
+ * These writes will not be re-ordered by instruction reordering. Under the covers it uses the faster store-store barrier, rather than the the slower store-load barrier, which is used when doing a volatile write.
  * One of the trade off with this improved performance is we are limited to a single producer, single consumer.
  * For further information on this see, the blog post <a href="http://robsjava.blogspot.co.uk/2013/06/a-faster-volatile.html">A Faster Volatile</a> by Rob Austin.
  * <p/>
@@ -156,6 +156,22 @@ public class ConcurrentBlockingDoubleQueue extends AbstractBlockingQueue {
 
     // intentionally not volatile, as we are carefully ensuring that the memory barriers are controlled below by other objects
     private final double[] data = new double[size];
+
+
+    /**
+     * Creates an BlockingQueue with the default capacity of 1024
+     */
+    public ConcurrentBlockingDoubleQueue() {
+
+    }
+
+    /**
+     * @param size Creates an BlockingQueue with the given (fixed) capacity
+     */
+    public ConcurrentBlockingDoubleQueue(int size) {
+        super(size);
+    }
+
 
     /**
      * Inserts the specified element into this queue if it is possible to do

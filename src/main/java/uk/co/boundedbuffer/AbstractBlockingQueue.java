@@ -44,13 +44,26 @@ class AbstractBlockingQueue {
         }
     }
 
-    // about 128 kb to fit in a L1 cache ( the 4 is from the size of a int, 4 bytes )
-    final int size = 1024 * (128 / 4);
-
+    final int size;
     // we set volatiles here, for the writes we use putOrderedInt ( as this is quicker ),
     // but for the read the is no performance benefit un using getOrderedInt.
     volatile int readLocation = 0;
     volatile int writeLocation = 0;
+
+    /**
+     * @param size Creates an BlockingQueue with the given (fixed) capacity
+     */
+    public AbstractBlockingQueue(int size) {
+        this.size = size;
+    }
+
+
+    /**
+     * Creates an BlockingQueue with the default capacity of 1024
+     */
+    public AbstractBlockingQueue() {
+        this.size = 1024;
+    }
 
     /**
      * @param writeLocation we want to minimize the number of volatile reads, so we read the writeLocation just once, so read it and pass it in
@@ -92,7 +105,6 @@ class AbstractBlockingQueue {
         // the write memory barrier will occur here, as we are storing the nextReadLocation
         unsafe.putOrderedInt(this, READ_LOCATION_OFFSET, nextReadLocation);
     }
-
 
     /**
      * currently implement as a spin lock
@@ -179,7 +191,6 @@ class AbstractBlockingQueue {
         return nextReadLocation;
     }
 
-
     /**
      * @param readLocation we want to minimize the number of volatile reads, so we read the readLocation just once, and pass it in
      * @return
@@ -196,7 +207,6 @@ class AbstractBlockingQueue {
 
         return nextReadLocation;
     }
-
 
     /**
      * Returns the number of additional elements that this queue can ideally
