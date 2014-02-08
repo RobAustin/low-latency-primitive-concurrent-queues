@@ -7,7 +7,7 @@ import com.sun.japex.TestCase;
  */
 public class ConcurrentBlockingIntQueueJapexDriver extends com.sun.japex.JapexDriverBase {
 
-    ConcurrentBlockingIntQueue queue = new ConcurrentBlockingIntQueue();
+    ConcurrentBlockingQueue queue = new ConcurrentBlockingQueue();
 
     public void warmup(TestCase testCase) {
 
