@@ -1,4 +1,4 @@
-### Aim.
+### Aim
 
 Our aim is to be extremely low latency with near zero [GC](http://www.oracle.com/technetwork/java/javase/gc-tuning-6-140523.html) overhead.
 
