@@ -16,7 +16,7 @@
     <div class="wrapper">
       <header>
         <h1>Low Latency Primitive Concurrent Queues</h1>
-        <p>Low latency, lock free, primitive bounded blocking queues backed by an primitive arrays such as an int[]. These classes mimic the interface of BlockingQueue, To reduce auto boxing in your code, they work with primitives rather than Objects and as such, are unable to actually implement the BlockingQueue. </p>
+        <p>Low latency, lock free, primitive bounded blocking queues backed by an primitive arrays. These queues are extremely quick as the use the faster CPU store-store barrier, they also mimic the interface of BlockingQueue, but to reduce auto boxing in your code and hence your GC overhead these queues take primitives. </p>
 
         <p class="view"><a href="https://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues">View the Project on GitHub <small>BoundedBuffer/low-latency-primitive-concurrent-queues</small></a></p>
 
