@@ -220,6 +220,10 @@ public class ConcurrentBlockingIntQueue {
         // purposely not volatile see the comment below
         data[writeLocation] = value;
 
+
+        // putOrderedInt wont immediately make the updates available, even on this thread, so will update the field so the change is immediately visible to, at least this thread. ( note the field is non volatile )
+        this.writeLocation = writeLocation;
+
         // the line below, is where the write memory barrier occurs,
         // we have just written back the data in the line above ( which is not require to have a memory barrier as we will be doing that in the line below
 
@@ -252,6 +256,9 @@ public class ConcurrentBlockingIntQueue {
 
         // purposely not volatile as the read memory barrier occurred above when we read 'writeLocation'
         final int value = data[readLocation];
+
+        // putOrderedInt wont immediately make the updates available, even on this thread, so will update the field so the change is immediately visible to, at least this thread. ( note the field is non volatile )
+        this.readLocation = readLocation;
 
         // the write memory barrier will occur here, as we are storing the nextReadLocation
         unsafe.putOrderedInt(this, READ_LOCATION_OFFSET, nextReadLocation);
@@ -356,6 +363,9 @@ public class ConcurrentBlockingIntQueue {
         // purposely not volatile see the comment below
         data[writeLocation] = value;
 
+        // putOrderedInt wont immediately make the updates available, even on this thread, so will update the field so the change is immediately visible to, at least this thread. ( note the field is non volatile )
+        this.writeLocation = writeLocation;
+
         // the line below, is where the write memory barrier occurs,
         // we have just written back the data in the line above ( which is not require to have a memory barrier as we will be doing that in the line below
 
@@ -401,6 +411,10 @@ public class ConcurrentBlockingIntQueue {
 
         // the line below, is where the write memory barrier occurs,
         // we have just written back the data in the line above ( which is not require to have a memory barrier as we will be doing that in the line below
+
+        // putOrderedInt wont immediately make the updates available, even on this thread, so will update the field so the change is immediately visible to, at least this thread. ( note the field is non volatile )
+        this.writeLocation = writeLocation;
+
 
         // write back the next write location
         unsafe.putOrderedInt(this, WRITE_LOCATION_OFFSET, nextWriteLocation);
@@ -465,6 +479,10 @@ public class ConcurrentBlockingIntQueue {
         // the line below, is where the write memory barrier occurs,
         // we have just written back the data in the line above ( which is not require to have a memory barrier as we will be doing that in the line below
 
+
+        // putOrderedInt wont immediately make the updates available, even on this thread, so will update the field so the change is immediately visible to, at least this thread. ( note the field is non volatile )
+        this.writeLocation = writeLocation;
+
         // write back the next write location
         unsafe.putOrderedInt(this, WRITE_LOCATION_OFFSET, nextWriteLocation);
         return true;
@@ -503,6 +521,10 @@ public class ConcurrentBlockingIntQueue {
 
         // purposely not volatile as the read memory barrier occurred above when we read 'writeLocation'
         final int value = data[readLocation];
+
+
+        // putOrderedInt wont immediately make the updates available, even on this thread, so will update the field so the change is immediately visible to, at least this thread. ( note the field is non volatile )
+        this.readLocation = readLocation;
 
         // the write memory barrier will occur here, as we are storing the nextReadLocation
         unsafe.putOrderedInt(this, READ_LOCATION_OFFSET, nextReadLocation);
@@ -660,6 +682,10 @@ public class ConcurrentBlockingIntQueue {
 
 
                 if (writeLocation == readLocation) {
+
+                    // putOrderedInt wont immediately make the updates available, even on this thread, so will update the field so the change is immediately visible to, at least this thread. ( note the field is non volatile )
+                    this.readLocation = readLocation;
+
                     unsafe.putOrderedInt(this, READ_LOCATION_OFFSET, readLocation);
                     return i;
                 }
@@ -674,6 +700,10 @@ public class ConcurrentBlockingIntQueue {
 
 
         } while (i <= maxElements);
+
+
+        // putOrderedInt wont immediately make the updates available, even on this thread, so will update the field so the change is immediately visible to, at least this thread. ( note the field is non volatile )
+        this.readLocation = readLocation;
 
         // the write memory barrier will occur here, as we are storing the new readLocation;
         unsafe.putOrderedInt(this, READ_LOCATION_OFFSET, readLocation);
