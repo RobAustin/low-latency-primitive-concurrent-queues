@@ -33,7 +33,7 @@ import java.util.concurrent.TimeoutException;
  * element from an empty queue will similarly block.
  * <p/>
  * <p>Due to the lock free nature of its  implementation, ordering works on a first come first served basis.<p/>
- * <p> Methods come in four forms, with different ways
+ * Methods come in four forms, with different ways
  * of handling operations that cannot be satisfied immediately, but may be
  * satisfied at some point in the future:
  * one throws an exception, the second returns a special value (either
@@ -41,7 +41,6 @@ import java.util.concurrent.TimeoutException;
  * blocks the current thread indefinitely until the operation can succeed,
  * and the fourth blocks for only a given maximum time limit before giving
  * up.  These methods are summarized in the following table:
- * </p>
  * <table BORDER CELLPADDING=3 CELLSPACING=1>
  * <tr>
  * <td></td>
@@ -153,7 +152,6 @@ import java.util.concurrent.TimeoutException;
  *
  * @author Rob Austin
  * @since 1.1
- *
  */
 public class ConcurrentBlockingIntQueue {
 
