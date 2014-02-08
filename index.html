@@ -31,6 +31,8 @@
         <h3>
 <a name="welcome-to-bounded-buffer" class="anchor" href="#welcome-to-bounded-buffer"><span class="octicon octicon-link"></span></a>Welcome to Bounded Buffer.</h3>
 
+<p>Our aim is to be extremely low latency with near zero <a href="http://www.oracle.com/technetwork/java/javase/gc-tuning-6-140523.html">GC</a> overhead.</p>
+
 <p>An example of how to use on of our low latency bounded queues.</p>
 
 <pre><code>
@@ -72,12 +74,12 @@ Executors.newSingleThreadExecutor().execute(new Runnable() {
 <h3>
 <a name="is-this-queue-thread-safe-" class="anchor" href="#is-this-queue-thread-safe-"><span class="octicon octicon-link"></span></a>Is this Queue Thread Safe ?</h3>
 
-<p>Yes we are thread safe, but you are limited to using just two threads per queue instance, One producer thread and a consumer thread.</p>
+<p>Yes - we are thread safe, but you are limited to using just two threads per queue instance, One producer thread and a consumer thread.</p>
 
 <h3>
 <a name="why-am-i-limited-to-only-using-just-two-threads-" class="anchor" href="#why-am-i-limited-to-only-using-just-two-threads-"><span class="octicon octicon-link"></span></a>Why am I limited to only using just two threads ?</h3>
 
-<p>They queues take advantage of the Unsafe.putOrdered, which provides of non-blocking code with guaranteed writes.
+<p>The queues take advantage of the Unsafe.putOrderedX(), which provides of non-blocking code with guaranteed writes.
 These writes will not be re-ordered by instruction reordering, they use a faster store-store barrier, rather than the the slower store-load barrie ( which is used when doing a volatile write ). One of the trade offs with this improved performance is the visibility of the reads and writes between cores.</p>
 
 <h3>
