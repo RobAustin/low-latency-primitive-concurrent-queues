@@ -41,7 +41,7 @@ import java.util.concurrent.TimeoutException;
  * blocks the current thread indefinitely until the operation can succeed,
  * and the fourth blocks for only a given maximum time limit before giving
  * up.  These methods are summarized in the following table:
- *
+ * <p/>
  * <table BORDER CELLPADDING=3 CELLSPACING=1>
  * <tr>
  * <td></td>
@@ -72,7 +72,7 @@ import java.util.concurrent.TimeoutException;
  * <td>{@link #peek(long, java.util.concurrent.TimeUnit) peek(time, unit)}</td>>
  * </tr>
  * </table>
-
+ * <p/>
  * <p/>
  * <p>A <tt>uk.co.boundedbuffer.ConcurrentBlockingLongQueue</tt> is capacity bounded. At any given
  * time it may have a <tt>remainingCapacity</tt> beyond which no
@@ -556,26 +556,6 @@ public class ConcurrentBlockingLongQueue {
             writeLocation += size;
 
         return writeLocation - readLocation;
-    }
-
-    /**
-     * Removes a single instance of the specified element from this queue,
-     * if it is present.  More formally, removes an element <tt>e</tt> such
-     * that <tt>o.equals(e)</tt>, if this queue contains one or more such
-     * elements.
-     * Returns <tt>true</tt> if this queue contained the specified element
-     * (or equivalently, if this queue changed as a result of the call).
-     *
-     * @param o element to be removed from this queue, if present
-     * @return <tt>true</tt> if this queue changed as a result of the call
-     * @throws ClassCastException   if the class of the specified element
-     *                              is incompatible with this queue
-     *                              (<a href="../Collection.html#optional-restrictions">optional</a>)
-     * @throws NullPointerException if the specified element is null
-     *                              (<a href="../Collection.html#optional-restrictions">optional</a>)
-     */
-    public boolean remove(Object o) {
-        return false;
     }
 
     /**

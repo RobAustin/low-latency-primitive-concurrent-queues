@@ -555,25 +555,6 @@ public class ConcurrentBlockingIntQueue {
         return writeLocation - readLocation;
     }
 
-    /**
-     * Removes a single instance of the specified element from this queue,
-     * if it is present.  More formally, removes an element <tt>e</tt> such
-     * that <tt>o.equals(e)</tt>, if this queue contains one or more such
-     * elements.
-     * Returns <tt>true</tt> if this queue contained the specified element
-     * (or equivalently, if this queue changed as a result of the call).
-     *
-     * @param o element to be removed from this queue, if present
-     * @return <tt>true</tt> if this queue changed as a result of the call
-     * @throws ClassCastException   if the class of the specified element
-     *                              is incompatible with this queue
-     *                              (<a href="../Collection.html#optional-restrictions">optional</a>)
-     * @throws NullPointerException if the specified element is null
-     *                              (<a href="../Collection.html#optional-restrictions">optional</a>)
-     */
-    public boolean remove(Object o) {
-        return false;
-    }
 
     /**
      * Returns <tt>true</tt> if this queue contains the specified element.
