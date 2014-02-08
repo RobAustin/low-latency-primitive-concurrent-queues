@@ -15,7 +15,7 @@ public class ConcurrentBlockingIntQueueTest {
     @Test
     public void testTake() throws Exception {
 
-        final ConcurrentBlockingQueue queue = new ConcurrentBlockingQueue();
+        final ConcurrentBlockingIntQueue queue = new ConcurrentBlockingIntQueue();
 
         // writer thread
         Executors.newSingleThreadExecutor().execute(new Runnable() {

@@ -4,9 +4,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
- * A low latency, lock free, primitive bounded blocking queue backed by an long[].
+ * A low latency, lock free, primitive bounded blocking queue backed by an float[].
  * This class mimics the interface of {@linkplain java.util.concurrent.BlockingQueue BlockingQueue},
- * however works with primitive longs rather than {@link Object}s, so is unable to actually implement the BlockingQueue .
+ * however works with primitive floats rather than {@link Object}s, so is unable to actually implement the BlockingQueue .
  * <p/>
  * This class takes advantage of the Unsafe.putOrderedInt, which allows us to create non-blocking code with guaranteed writes.
  * These writes will not be re-orderd by instruction reordering. Under the covers it uses the faster store-store barrier, rather than the the slower store-load barrier, which is used when doing a volatile write.
@@ -51,13 +51,13 @@ import java.util.concurrent.TimeoutException;
  * <td>{@link #add add(e)}</td>
  * <td>{@link #offer offer(e)}</td>
  * <td>{@link #put put(e)}</td>
- * <td>{@link #offer(long, long, java.util.concurrent.TimeUnit) offer(e, time, unit)}</td>
+ * <td>{@link #offer(float, long, java.util.concurrent.TimeUnit) offer(e, time, unit)}</td>
  * </tr>
  * <tr>
  * <td><b>Remove</b></td>
  * <td>{@link #poll poll()}</td>
  * <td>not applicable</td>
- * <td>{@link #take take()}</td>
+ * <td>{@link #take long()}</td>
  * <td>{@link #poll(long, java.util.concurrent.TimeUnit) poll(time, unit)}</td>
  * </tr>
  * <tr>
@@ -70,17 +70,17 @@ import java.util.concurrent.TimeoutException;
  * </table>
  * <p/>
  * <p/>
- * <p>A <tt>uk.co.boundedbuffer.ConcurrentBlockingLongQueue</tt> is capacity bounded. At any given
+ * <p>A <tt>uk.co.boundedbuffer.ConcurrentBlockingFloatQueue</tt> is capacity bounded. At any given
  * time it may have a <tt>remainingCapacity</tt> beyond which no
  * additional elements can be <tt>put</tt> without blocking.
  * <p/>
  * <p> It is not possible to remove an arbitrary element from a queue using
  * <tt>remove(x)</tt>. As this operation would not performed very efficiently.
  * <p/>
- * <p>All of <tt>uk.co.boundedbuffer.ConcurrentBlockingLongQueue</tt> methods are thread-safe when used with a single producer and single consumer, internal atomicity
+ * <p>All of <tt>uk.co.boundedbuffer.ConcurrentBlockingFloatQueue</tt> methods are thread-safe when used with a single producer and single consumer, internal atomicity
  * is achieved using lock free strategies, such as sping locks.
  * <p/>
- * <p>Like a <tt>BlockingQueue</tt>, the uk.co.boundedbuffer.ConcurrentBlockingLongQueue does <em>not</em> intrinsically support
+ * <p>Like a <tt>BlockingQueue</tt>, the uk.co.boundedbuffer.ConcurrentBlockingFloatQueue does <em>not</em> intrinsically support
  * any kind of &quot;close&quot; or &quot;shutdown&quot; operation to
  * indicate that no more items will be added.  The needs and usage of
  * such features tend to be implementation-dependent. For example, a
@@ -152,10 +152,10 @@ import java.util.concurrent.TimeoutException;
  * @author Rob Austin
  * @since 1.1
  */
-public class ConcurrentBlockingLongQueue extends AbstractBlockingQueue {
+public class ConcurrentBlockingFloatQueue extends AbstractBlockingQueue {
 
     // intentionally not volatile, as we are carefully ensuring that the memory barriers are controlled below by other objects
-    private final long[] data = new long[size];
+    private final float[] data = new float[size];
 
     /**
      * Inserts the specified element into this queue if it is possible to do
@@ -163,7 +163,7 @@ public class ConcurrentBlockingLongQueue extends AbstractBlockingQueue {
      * <tt>true</tt> upon success and throwing an
      * <tt>IllegalStateException</tt> if no space is currently available.
      * When using a capacity-restricted queue, it is generally preferable to
-     * use {@link #offer(long) offer}.
+     * use {@link #offer(float) offer}.
      *
      * @param value the element to add
      * @return <tt>true</tt> (as specified by {@link java.util.Collection#add})
@@ -175,7 +175,7 @@ public class ConcurrentBlockingLongQueue extends AbstractBlockingQueue {
      * @throws IllegalArgumentException if some property of the specified
      *                                  element prevents it from being added to this queue
      */
-    public boolean add(long value) {
+    public boolean add(float value) {
 
         // volatile read
         final int writeLocation = this.writeLocation;
@@ -198,7 +198,7 @@ public class ConcurrentBlockingLongQueue extends AbstractBlockingQueue {
      * @return the head of this queue
      * @throws InterruptedException if interrupted while waiting
      */
-    public long take() {
+    public float take() {
 
         // volatile read
         final int readLocation = this.readLocation;
@@ -207,7 +207,7 @@ public class ConcurrentBlockingLongQueue extends AbstractBlockingQueue {
         final int nextReadLocation = blockForReadSpace(readLocation);
 
         // purposely not volatile as the read memory barrier occurred above when we read 'writeLocation'
-        final long value = data[readLocation];
+        final float value = data[readLocation];
 
         setReadLocation(nextReadLocation);
 
@@ -226,7 +226,7 @@ public class ConcurrentBlockingLongQueue extends AbstractBlockingQueue {
      * @throws java.util.concurrent.TimeoutException if timeout time is exceeded
      */
 
-    public long peek(long timeout, TimeUnit unit)
+    public float peek(long timeout, TimeUnit unit)
             throws InterruptedException, TimeoutException {
 
         final int readLocation = this.readLocation;
@@ -253,7 +253,7 @@ public class ConcurrentBlockingLongQueue extends AbstractBlockingQueue {
      * @throws IllegalArgumentException if some property of the specified
      *                                  element prevents it from being added to this queue
      */
-    public boolean offer(long value) {
+    public boolean offer(float value) {
 
         // we want to minimize the number of volatile reads, so we read the writeLocation just once.
         final int writeLocation = this.writeLocation;
@@ -285,7 +285,7 @@ public class ConcurrentBlockingLongQueue extends AbstractBlockingQueue {
      * @throws IllegalArgumentException if some property of the specified
      *                                  element prevents it from being added to this queue
      */
-    public void put(long value) throws InterruptedException {
+    public void put(float value) throws InterruptedException {
 
         final int writeLocation1 = this.writeLocation;
         final int nextWriteLocation = blockForWriteSpace(writeLocation1);
@@ -314,7 +314,7 @@ public class ConcurrentBlockingLongQueue extends AbstractBlockingQueue {
      * @throws IllegalArgumentException if some property of the specified
      *                                  element prevents it from being added to this queue
      */
-    public boolean offer(long value, long timeout, TimeUnit unit)
+    public boolean offer(float value, long timeout, TimeUnit unit)
             throws InterruptedException {
 
         // we want to minimize the number of volatile reads, so we read the writeLocation just once.
@@ -372,14 +372,14 @@ public class ConcurrentBlockingLongQueue extends AbstractBlockingQueue {
      * @throws InterruptedException                  if interrupted while waiting
      * @throws java.util.concurrent.TimeoutException if timeout time is exceeded
      */
-    public long poll(long timeout, TimeUnit unit)
+    public float poll(long timeout, TimeUnit unit)
             throws InterruptedException, TimeoutException {
 
         final int readLocation = this.readLocation;
         int nextReadLocation = blockForReadSpace(timeout, unit, readLocation);
 
         // purposely not volatile as the read memory barrier occurred above when we read 'writeLocation'
-        final long value = data[readLocation];
+        final float value = data[readLocation];
         setReadLocation(nextReadLocation);
 
         return value;
@@ -431,7 +431,7 @@ public class ConcurrentBlockingLongQueue extends AbstractBlockingQueue {
      * either or both collections when the associated exception is
      * thrown.  Further, the behavior of
      * this operation is undefined if the following methods are called during progress of this operation
-     * {@link #take()}. {@link #offer(long)}, {@link #put(long)},  {@link #drainTo(long[], int)}}
+     * {@link #take()}. {@link #offer(float)}, {@link #put(float)},  {@link #drainTo(float[], int)}}
      *
      * @param target the collection to transfer elements into
      * @return the number of elements transferred
@@ -444,7 +444,7 @@ public class ConcurrentBlockingLongQueue extends AbstractBlockingQueue {
      *                                       queue, or some property of an element of this queue prevents
      *                                       it from being added to the specified collection
      */
-    int drainTo(long[] target) {
+    int drainTo(float[] target) {
         return drainTo(target, target.length);
     }
 
@@ -471,7 +471,7 @@ public class ConcurrentBlockingLongQueue extends AbstractBlockingQueue {
      *                                       queue, or some property of an element of this queue prevents
      *                                       it from being added to the specified collection
      */
-    int drainTo(long[] target, int maxElements) {
+    int drainTo(float[] target, int maxElements) {
 
         // we want to minimize the number of volatile reads, so we read the readLocation just once.
         int readLocation = this.readLocation;

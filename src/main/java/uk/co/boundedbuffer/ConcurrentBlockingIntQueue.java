@@ -8,7 +8,7 @@ import java.util.concurrent.TimeoutException;
  * This class mimics the interface of {@linkplain java.util.concurrent.BlockingQueue BlockingQueue},
  * however works with primitive ints rather than {@link Object}s, so is unable to actually implement the BlockingQueue .
  * <p/>
- * This class takes advantage of the Unsafe.putOrderedObject, which allows us to create non-blocking code with guaranteed writes.
+ * This class takes advantage of the Unsafe.putOrderedInt, which allows us to create non-blocking code with guaranteed writes.
  * These writes will not be re-orderd by instruction reordering. Under the covers it uses the faster store-store barrier, rather than the the slower store-load barrier, which is used when doing a volatile write.
  * One of the trade off with this improved performance is we are limited to a single producer, single consumer.
  * For further information on this see, the blog post <a href="http://robsjava.blogspot.co.uk/2013/06/a-faster-volatile.html">A Faster Volatile</a> by Rob Austin.
@@ -69,17 +69,17 @@ import java.util.concurrent.TimeoutException;
  * </tr>
  * </table>
  * <p/>
- * <p>A <tt>uk.co.boundedbuffer.ConcurrentBlockingQueue</tt> is capacity bounded. At any given
+ * <p>A <tt>uk.co.boundedbuffer.ConcurrentBlockingIntQueue</tt> is capacity bounded. At any given
  * time it may have a <tt>remainingCapacity</tt> beyond which no
  * additional elements can be <tt>put</tt> without blocking.
  * <p/>
  * <p> It is not possible to remove an arbitrary element from a queue using
  * <tt>remove(x)</tt>. As this operation would not performed very efficiently.
  * <p/>
- * <p>All of <tt>uk.co.boundedbuffer.ConcurrentBlockingQueue</tt> methods are thread-safe when used with a single producer and single consumer, internal atomicity
+ * <p>All of <tt>uk.co.boundedbuffer.ConcurrentBlockingIntQueue</tt> methods are thread-safe when used with a single producer and single consumer, internal atomicity
  * is achieved using lock free strategies, such as sping locks.
  * <p/>
- * <p>Like a <tt>BlockingQueue</tt>, the uk.co.boundedbuffer.ConcurrentBlockingQueue does <em>not</em> intrinsically support
+ * <p>Like a <tt>BlockingQueue</tt>, the uk.co.boundedbuffer.ConcurrentBlockingIntQueue does <em>not</em> intrinsically support
  * any kind of &quot;close&quot; or &quot;shutdown&quot; operation to
  * indicate that no more items will be added.  The needs and usage of
  * such features tend to be implementation-dependent. For example, a
@@ -150,7 +150,7 @@ import java.util.concurrent.TimeoutException;
  * @author Rob Austin
  * @since 1.1
  */
-public class ConcurrentBlockingQueue extends AbstractBlockingQueue {
+public class ConcurrentBlockingIntQueue extends AbstractBlockingQueue {
 
     // intentionally not volatile, as we are carefully ensuring that the memory barriers are controlled below by other objects
     private final int[] data = new int[size];

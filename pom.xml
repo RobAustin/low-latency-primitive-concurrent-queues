@@ -154,9 +154,9 @@
                     <show>public</show>
                     <includeDependencySources>false</includeDependencySources>
                     <nohelp>true</nohelp>
-                    <header>uk.co.boundedbuffer.ConcurrentBlockingQueue, ${project.version}</header>
-                    <footer>uk.co.boundedbuffer.ConcurrentBlockingQueue, ${project.version}</footer>
-                    <doctitle>uk.co.boundedbuffer.ConcurrentBlockingQueue, ${project.version}</doctitle>
+                    <header>uk.co.boundedbuffer.ConcurrentBlockingIntQueue, ${project.version}</header>
+                    <footer>uk.co.boundedbuffer.ConcurrentBlockingIntQueue, ${project.version}</footer>
+                    <doctitle>uk.co.boundedbuffer.ConcurrentBlockingIntQueue, ${project.version}</doctitle>
                     <links>
                         <link>http://static.springsource.org/spring/docs/3.0.x/javadoc-api/</link>
                     </links>
