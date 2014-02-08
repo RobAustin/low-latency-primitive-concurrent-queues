@@ -42,7 +42,7 @@ import java.util.concurrent.TimeoutException;
  * and the fourth blocks for only a given maximum time limit before giving
  * up.  These methods are summarized in the following table:
  * </p>
- * <p><table BORDER CELLPADDING=3 CELLSPACING=1>
+ * <table BORDER CELLPADDING=3 CELLSPACING=1>
  * <tr>
  * <td></td>
  * <td ALIGN=CENTER><em>Throws exception</em></td>
@@ -72,7 +72,7 @@ import java.util.concurrent.TimeoutException;
  * <td>{@link #peek(long, java.util.concurrent.TimeUnit) peek(time, unit)}</td>>
  * </tr>
  * </table>
- * </p>
+
  * <p/>
  * <p>A <tt>uk.co.boundedbuffer.ConcurrentBlockingLongQueue</tt> is capacity bounded. At any given
  * time it may have a <tt>remainingCapacity</tt> beyond which no
@@ -137,9 +137,7 @@ import java.util.concurrent.TimeoutException;
  * actions subsequent to the access or removal of that element from
  * the {@code BlockingQueue} in another thread.
  * <p/>
- *
- * @author Rob Austin
- * @since 1.1
+ * <p/>
  * <p/>
  * Copyright 2014 Rob Austin
  * <p/>
@@ -154,6 +152,9 @@ import java.util.concurrent.TimeoutException;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * @author Rob Austin
+ * @since 1.1
  */
 public class ConcurrentBlockingLongQueue {
 
