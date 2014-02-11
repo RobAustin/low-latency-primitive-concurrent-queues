@@ -41,7 +41,7 @@ Having trouble ? Check out our documentation at [JavaDoc] (http://boundedbuffer.
 
 ### Is this Queue Thread Safe ?
 
-Yes - we are thread safe, but you are limited to using just two threads per queue instance, One producer thread and a consumer thread.
+Yes - it's thread safe, but you are limited to using just two threads per queue instance, One producer thread and a consumer thread.
 
 ### Why am I limited to only using just two threads ?
 
