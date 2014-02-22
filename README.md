@@ -24,12 +24,12 @@ Executors.newSingleThreadExecutor().execute(new Runnable() {
 });
 
 
-Performance comparison
+```
+
+### Much faster than ArrayBlocking Queue
 
 ![PerformanceComparison](https://raw.github.com/BoundedBuffer/low-latency-primitive-concurrent-queues/master/src/test/resources/performance-comparison.png)
 
-
-```
 
 ### Maven Central
 We are hosted at [Maven Central] (http://search.maven.org), one of the quickest ways to get up and running is to add this [Maven](http://maven.apache.org/what-is-maven.html) dependency to your pom file :
