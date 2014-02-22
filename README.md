@@ -26,7 +26,7 @@ Executors.newSingleThreadExecutor().execute(new Runnable() {
 
 Performance comparison
 
-![PerformanceComparison](/boundedbuffer/low-latency-primitive-concurrent-queues/src/test/resources/performance-comparison.png)
+![PerformanceComparison](https://raw.github.com/BoundedBuffer/low-latency-primitive-concurrent-queues/master/src/test/resources/performance-comparison.png)
 
 
 ```
