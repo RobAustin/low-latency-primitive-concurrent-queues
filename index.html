@@ -1,33 +1,36 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Bounded Buffer by BoundedBuffer</title>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Bounded Buffer : Low latency, lock free, primitive bounded blocking queues. They are extremely quick as they use the faster CPU store-store barrier, they also mimic the interface of BlockingQueue, but take primitives to reduce auto boxing in your code and hence your GC overhead." />
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Bounded Buffer</title>
   </head>
+
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>Bounded Buffer</h1>
-        <p>Low latency, lock free, primitive bounded blocking queues. They are extremely quick as they use the faster CPU store-store barrier, they also mimic the interface of BlockingQueue, but take primitives to reduce auto boxing in your code and hence your GC overhead.</p>
 
-        <p class="view"><a href="https://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues">View the Project on GitHub <small>BoundedBuffer/low-latency-primitive-concurrent-queues</small></a></p>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues">View on GitHub</a>
 
+          <h1 id="project_title">Bounded Buffer</h1>
+          <h2 id="project_tagline">Low latency, lock free, primitive bounded blocking queues. They are extremely quick as they use the faster CPU store-store barrier, they also mimic the interface of BlockingQueue, but take primitives to reduce auto boxing in your code and hence your GC overhead.</h2>
 
-        <ul>
-          <li><a href="https://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/BoundedBuffer/low-latency-primitive-concurrent-queues/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
         <h3>
 <a name="aim" class="anchor" href="#aim"><span class="octicon octicon-link"></span></a>Aim</h3>
 
@@ -52,6 +55,12 @@ Executors.newSingleThreadExecutor().execute(new Runnable() {
     }
 });
 
+
+Performance comparison
+
+![PerformanceComparison](/boundedbuffer/low-latency-primitive-concurrent-queues/src/test/resources/performance-comparison.png)
+
+
 </code></pre>
 
 <h3>
@@ -62,7 +71,7 @@ Executors.newSingleThreadExecutor().execute(new Runnable() {
 <pre><code>&lt;dependency&gt;
     &lt;groupId&gt;uk.co.boundedbuffer&lt;/groupId&gt;
     &lt;artifactId&gt;low-latency-primitive-concurrent-queues&lt;/artifactId&gt;
-    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+    &lt;version&gt;1.0.0&lt;/version&gt;
 &lt;dependency&gt;
 </code></pre>
 
@@ -102,12 +111,17 @@ These writes will not be re-ordered by instruction reordering, they use a faster
 
 <p>If you are interest in low latency java, see my blog at <a href="http://robsjava.blogspot.co.uk">http://robsjava.blogspot.co.uk</a></p>
       </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/BoundedBuffer">BoundedBuffer</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Bounded Buffer maintained by <a href="https://github.com/BoundedBuffer">BoundedBuffer</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
+
     
+
   </body>
 </html>
