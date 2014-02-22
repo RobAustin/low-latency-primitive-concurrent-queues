@@ -193,7 +193,7 @@ public class ConcurrentBlockingIntQueue extends AbstractBlockingQueue {
         // volatile read
         final int writeLocation = this.writeLocation;
 
-        final int nextWriteLocation = blockAndGetNextWriteLocation(writeLocation);
+        final int nextWriteLocation = blockForWriteSpace(writeLocation);
 
         // purposely not volatile
         data[writeLocation] = value;

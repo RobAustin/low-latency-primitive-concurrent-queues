@@ -69,21 +69,21 @@ class AbstractBlockingQueue {
      * @param writeLocation we want to minimize the number of volatile reads, so we read the writeLocation just once, so read it and pass it in
      * @return
      */
-    public int blockAndGetNextWriteLocation(int writeLocation) {
+   /* public int blockForWriteSpace(int writeLocation) {
 
         // sets the nextWriteLocation my moving it on by 1, this may cause it it wrap back to the start.
         final int nextWriteLocation = (writeLocation + 1 == size) ? 0 : writeLocation + 1;
 
         if (nextWriteLocation == size - 1)
-
-            if (readLocation == 0)
-                throw new IllegalStateException();
-            else if (nextWriteLocation + 1 == readLocation)
-                throw new IllegalStateException();
+            while (readLocation == 0)
+                blockAtAdd();
+        else
+            while (nextWriteLocation + 1 == readLocation)
+                blockAtAdd();
 
         return nextWriteLocation;
 
-    }
+    }*/
 
     void setWriteLocation(int nextWriteLocation) {
 
