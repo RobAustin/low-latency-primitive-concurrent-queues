@@ -369,14 +369,13 @@ public class ConcurrentBlockingIntQueueTest {
     }
 
 
-    volatile int stopOptimizingOut;
 
     @Test
     public void testLatency() throws NoSuchFieldException, InterruptedException {
 
 
-        for (int pwr = 2; pwr < 11; pwr++) {
-            int i = (int) Math.pow(9, pwr);
+        for (int pwr = 2; pwr < 1000; pwr++) {
+            int i = 300000 * pwr;
 
 
             final long arrayBlockingQueueStart = System.nanoTime();
@@ -388,9 +387,11 @@ public class ConcurrentBlockingIntQueueTest {
             testConcurrentBlockingIntQueue(i);
             final double concurrentBlockingDuration = System.nanoTime() - concurrentBlockingIntQueueStart;
 
-            System.out.printf("Performing %,d loops, ArrayBlockingQueue() took %.3f ms and calling ConcurrentBlockingIntQueue took %.3f ms on average, ratio=%.1f%n",
+      /*      System.out.printf("Performing %,d loops, ArrayBlockingQueue() took %.3f ms and calling ConcurrentBlockingIntQueue took %.3f ms on average, ratio=%.1f%n",
                     i, arrayBlockingDuration / 1000000.0, concurrentBlockingDuration / 1000000.0, (double) arrayBlockingDuration / (double) concurrentBlockingDuration);
-
+*/
+            System.out.printf("%d\t%.3f\t%.3f\n",
+                    i, arrayBlockingDuration / 1000000.0, concurrentBlockingDuration / 1000000.0, (double) arrayBlockingDuration / (double) concurrentBlockingDuration);
 
         }
 
