@@ -7,6 +7,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by robaustin on 31/01/2014.
@@ -87,9 +88,12 @@ public class ConcurrentBlockingIntQueueTest {
     @Test
     public void testWithFasterReader() throws Exception {
 
-        final ConcurrentBlockingIntQueue ConcurrentBlockingIntQueue = new ConcurrentBlockingIntQueue();
+        final ConcurrentBlockingIntQueue concurrentBlockingIntQueue = new ConcurrentBlockingIntQueue();
         final int max = 100;
         final CountDownLatch countDown = new CountDownLatch(1);
+
+        final AtomicBoolean success = new AtomicBoolean(true);
+
 
         new Thread(
                 new Runnable() {
@@ -97,7 +101,7 @@ public class ConcurrentBlockingIntQueueTest {
                     @Override
                     public void run() {
                         for (int i = 1; i < max; i++) {
-                            ConcurrentBlockingIntQueue.add(i);
+                            concurrentBlockingIntQueue.add(i);
                             try {
                                 Thread.sleep((int) (java.lang.Math.random() * 100));
                             } catch (InterruptedException e) {
@@ -114,16 +118,26 @@ public class ConcurrentBlockingIntQueueTest {
 
                     @Override
                     public void run() {
+
+                        int value = 0;
                         for (int i = 1; i < max; i++) {
 
-                            final int value = ConcurrentBlockingIntQueue.take();
+                            final int newValue = concurrentBlockingIntQueue.take();
                             try {
-                                junit.framework.Assert.assertEquals(i, value);
+                                junit.framework.Assert.assertEquals(i, newValue);
                             } catch (Error e) {
-                                System.out.println("value=" + value);
+                                System.out.println("value=" + newValue);
 
                             }
-                            System.out.println("value=" + value);
+
+
+                            if (newValue != value + 1) {
+                                success.set(false);
+                                return;
+                            }
+
+                            value = newValue;
+
                             try {
                                 Thread.sleep((int) (Math.random() * 10));
                             } catch (InterruptedException e) {
@@ -136,6 +150,8 @@ public class ConcurrentBlockingIntQueueTest {
                 }).start();
 
         countDown.await();
+
+        Assert.assertTrue(success.get());
     }
 
 
@@ -147,9 +163,10 @@ public class ConcurrentBlockingIntQueueTest {
     @Test
     public void testWithFasterWriter() throws Exception {
 
-        final ConcurrentBlockingIntQueue ConcurrentBlockingIntQueue = new ConcurrentBlockingIntQueue();
+        final ConcurrentBlockingIntQueue concurrentBlockingIntQueue = new ConcurrentBlockingIntQueue();
         final int max = 200;
         final CountDownLatch countDown = new CountDownLatch(1);
+        final AtomicBoolean success = new AtomicBoolean(true);
 
         new Thread(
                 new Runnable() {
@@ -157,7 +174,7 @@ public class ConcurrentBlockingIntQueueTest {
                     @Override
                     public void run() {
                         for (int i = 1; i < max; i++) {
-                            ConcurrentBlockingIntQueue.add(i);
+                            concurrentBlockingIntQueue.add(i);
                             try {
                                 Thread.sleep((int) (Math.random() * 3));
                             } catch (InterruptedException e) {
@@ -174,16 +191,26 @@ public class ConcurrentBlockingIntQueueTest {
 
                     @Override
                     public void run() {
+
+                        int value = 0;
                         for (int i = 1; i < max; i++) {
 
-                            final int value = ConcurrentBlockingIntQueue.take();
+                            final int newValue = concurrentBlockingIntQueue.take();
                             try {
-                                junit.framework.Assert.assertEquals(i, value);
+                                junit.framework.Assert.assertEquals(i, newValue);
                             } catch (Error e) {
-                                System.out.println("value=" + value);
+                                System.out.println("value=" + newValue);
 
                             }
-                            System.out.println("value=" + value);
+
+
+                            if (newValue != value + 1) {
+                                success.set(false);
+                                return;
+                            }
+
+                            value = newValue;
+
                             try {
                                 Thread.sleep((int) (Math.random() * 10));
                             } catch (InterruptedException e) {
@@ -196,6 +223,7 @@ public class ConcurrentBlockingIntQueueTest {
                 }).start();
 
         countDown.await();
+        Assert.assertTrue(success.get());
     }
 
 
@@ -203,8 +231,10 @@ public class ConcurrentBlockingIntQueueTest {
     public void testFlatOut() throws Exception {
 
         final ConcurrentBlockingIntQueue concurrentBlockingIntQueue = new ConcurrentBlockingIntQueue();
-        final int max = 101024;
+        final int max = Integer.MAX_VALUE;
         final CountDownLatch countDown = new CountDownLatch(1);
+
+        final AtomicBoolean success = new AtomicBoolean(true);
 
         Thread writerThread = new Thread(
                 new Runnable() {
@@ -232,24 +262,29 @@ public class ConcurrentBlockingIntQueueTest {
 
                     @Override
                     public void run() {
-                        try {
-                            for (int i = 1; i < max; i++) {
 
-                                final int value = concurrentBlockingIntQueue.take();
-                                try {
-                                    junit.framework.Assert.assertEquals(i, value);
-                                } catch (Error e) {
-                                    System.out.println("value=" + value);
+                        int value = 0;
+                        for (int i = 1; i < max; i++) {
 
-                                }
-                                System.out.println("value=" + value);
+                            final int newValue = concurrentBlockingIntQueue.take();
+                            try {
+                                junit.framework.Assert.assertEquals(i, newValue);
+                            } catch (Error e) {
+                                System.out.println("value=" + newValue);
 
                             }
-                            countDown.countDown();
-                            System.out.println("reader finished");
-                        } catch (Exception e) {
-                            e.printStackTrace();
+
+
+                            if (newValue != value + 1) {
+                                success.set(false);
+                                return;
+                            }
+
+                            value = newValue;
+
                         }
+                        countDown.countDown();
+
                     }
                 });
 
