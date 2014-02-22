@@ -23,6 +23,12 @@ Executors.newSingleThreadExecutor().execute(new Runnable() {
     }
 });
 
+
+Performance comparison
+
+![PerformanceComparison](/boundedbuffer/low-latency-primitive-concurrent-queues/src/test/resources/performance-comparison.png)
+
+
 ```
 
 ### Maven Central
