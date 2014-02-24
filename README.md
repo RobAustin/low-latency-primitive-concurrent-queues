@@ -1,4 +1,4 @@
-### Faster than ArrayBlocking Queue
+### Faster than ArrayBlockingQueue
 
 ![PerformanceComparison](https://raw.github.com/BoundedBuffer/low-latency-primitive-concurrent-queues/master/src/test/resources/performance-comparison.png)
 
