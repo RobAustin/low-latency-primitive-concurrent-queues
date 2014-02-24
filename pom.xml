@@ -14,12 +14,13 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>uk.co.boundedbuffer</groupId>
     <artifactId>low-latency-primitive-concurrent-queues</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-SNAPSHOT</version>
 
     <packaging>jar</packaging>
     <name>Low Latency Primitive Concurrent Queues</name>
@@ -43,7 +44,7 @@
         <developerConnection>scm:git:git@github.com:BoundedBuffer/low-latency-primitive-concurrent-queues
         </developerConnection>
         <url>git@github.com:BoundedBuffer/low-latency-primitive-concurrent-queues</url>
-        <tag>low-latency-primitive-concurrent-queues-1.0.0</tag>
+        <tag>master</tag>
     </scm>
 
 
@@ -201,27 +202,29 @@
                 </executions>
                 <configuration>
                     <japexConfig>
-                        <testSuite xmlns="http://www.sun.com/japex/testSuite" name="ParsingPerformance">
-                            <param name="japex.namedClassPath" value="maven.test.classpath" />
-                            <param name="japex.resultUnit" value="ms" />
-                            <param name="japex.warmupIterations" value="0" />
-                            <param name="japex.runIterations" value="1000" />
-                            <param name="japex.numberOfThreads" value="4" />
-                            <param name="japex.chartType" value="linechart" />
-                            <param name="japex.numberOfCpus" value="4" />
-                            <param name="japex.resultUnit" value="ms" />
+                        <testSuite name="ParsingPerformance" xmlns="http://www.sun.com/japex/testSuite">
+                            <param name="japex.namedClassPath" value="maven.test.classpath"/>
+                            <param name="japex.resultUnit" value="ms"/>
+                            <param name="japex.warmupIterations" value="0"/>
+                            <param name="japex.runIterations" value="1000"/>
+                            <param name="japex.numberOfThreads" value="4"/>
+                            <param name="japex.chartType" value="linechart"/>
+                            <param name="japex.numberOfCpus" value="4"/>
+                            <param name="japex.resultUnit" value="ms"/>
 
                             <driver name="ConcurrentBlockingIntQueue">
-                                <param name="japex.driverClass" value="uk.co.boundedbuffer.ConcurrentBlockingIntQueueJapexDriver" />
-                                <param name="description" value="Memory usage sample class" />
+                                <param name="japex.driverClass"
+                                       value="uk.co.boundedbuffer.ConcurrentBlockingIntQueueJapexDriver"/>
+                                <param name="description" value="Memory usage sample class"/>
 
                             </driver>
                             <driver name="ArrayBlockingQueue">
-                                <param name="japex.driverClass" value="uk.co.boundedbuffer.ArrayBlockingQueueJapexDriver" />
-                                <param name="description" value="Array Blocking Queue" />
+                                <param name="japex.driverClass"
+                                       value="uk.co.boundedbuffer.ArrayBlockingQueueJapexDriver"/>
+                                <param name="description" value="Array Blocking Queue"/>
 
                             </driver>
-                            <testCase name="test1" />
+                            <testCase name="test1"/>
 
                         </testSuite>
                     </japexConfig>
