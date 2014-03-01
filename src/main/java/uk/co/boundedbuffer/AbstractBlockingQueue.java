@@ -65,25 +65,6 @@ class AbstractBlockingQueue {
         this.size = 1024;
     }
 
-    /**
-     * @param writeLocation we want to minimize the number of volatile reads, so we read the writeLocation just once, so read it and pass it in
-     * @return
-     */
-   /* public int blockForWriteSpace(int writeLocation) {
-
-        // sets the nextWriteLocation my moving it on by 1, this may cause it it wrap back to the start.
-        final int nextWriteLocation = (writeLocation + 1 == size) ? 0 : writeLocation + 1;
-
-        if (nextWriteLocation == size - 1)
-            while (readLocation == 0)
-                blockAtAdd();
-        else
-            while (nextWriteLocation + 1 == readLocation)
-                blockAtAdd();
-
-        return nextWriteLocation;
-
-    }*/
 
     void setWriteLocation(int nextWriteLocation) {
 
@@ -135,6 +116,46 @@ class AbstractBlockingQueue {
     boolean blockAtAdd(long timeoutAt) {
         return (timeoutAt < System.nanoTime());
     }
+
+
+    /**
+     * This method is not thread safe it therefore only provides and approximation of the size,
+     * the size will be corrected if nothing was added or removed from the queue at the time it was called
+     *
+     * @return an approximation of the size
+     */
+    public int size() {
+        int read = readLocation;
+        int write = writeLocation;
+
+        if (write < read)
+            write += size;
+
+        return write - read;
+
+    }
+
+
+    /**
+     * The items will be cleared correctly if nothing was added or removed from the queue at the time it was called
+     *
+     * @return an approximation of the size
+     */
+    public void clear() {
+        readLocation = writeLocation;
+    }
+
+
+    /**
+     * This method is not thread safe it therefore only provides and approximation of isEmpty(),
+     * it will be corrected if nothing was added or removed from the queue at the time it was called
+     *
+     * @return an approximation of isEmpty()
+     */
+    public boolean isEmpty() {
+        return readLocation == writeLocation;
+    }
+
 
     /**
      * @param writeLocation the current write location
