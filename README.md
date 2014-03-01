@@ -50,8 +50,7 @@ Yes - it's thread safe, but you are limited to using just two threads per queue 
 
 ### Why am I limited to only using just two threads ?
 
-The queues take advantage of the Unsafe.putOrderedX(), which provides of non-blocking code with guaranteed writes.
-These writes will not be re-ordered by instruction reordering, they use a faster store-store barrier, rather than the the slower store-load barrie ( which is used when doing a volatile write ). One of the trade offs with this improved performance is the visibility of the reads and writes between cores.
+The queues take advantage of the Unsafe.putOrderedX(), which provides non-blocking code with guaranteed writes. These writes will not be re-ordered by instruction reordering, they use a faster store-store barrier, rather than the the slower store-load barrier ( which is used when doing a volatile write ). One of the trade offs with this improved performance is the visibility of the reads and writes between cores.
 
 ### Licence
 [Apache v2](http://www.apache.org/licenses/LICENSE-2.0.html)
