@@ -92,18 +92,17 @@ import java.util.concurrent.TimeoutException;
  * Note that a <tt>BlockingQueue</tt> can ONLY be used with a single
  * producers and single consumer thead.
  * <pre>
- *  // writer thread
+ *
  *  Executors.newSingleThreadExecutor().execute(new Runnable() {
  *
- *  @Override
  *  public void run() {
  *       queue.add(1);
  *       }
  *  });
  *
- *  // reader thread
+ *
  *  Executors.newSingleThreadExecutor().execute(new Runnable() {
- *  @Override
+ *
  *  public void run() {
  *           final int value = queue.take();
  *       }
