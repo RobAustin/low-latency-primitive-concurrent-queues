@@ -45,10 +45,17 @@ class AbstractBlockingQueue {
     }
 
     final int size;
+
+    // only set and read by the producer thread, ( that the thread that's calling put(), offer() or add() )
+    int producerWriteLocation;
+
+    // only set and read by the comumer thread, ( that the thread that's calling get(), poll() or peek() )
+    int consumerReadLocation;
+
     // we set volatiles here, for the writes we use putOrderedInt ( as this is quicker ),
-    // but for the read the is no performance benefit un using getOrderedInt.
-    volatile int readLocation = 0;
-    volatile int writeLocation = 0;
+    // but for the read of a volatile there is no performance benefit un using getOrderedInt.
+    volatile int readLocation;
+    volatile int writeLocation;
 
     /**
      * @param size Creates an BlockingQueue with the given (fixed) capacity
@@ -70,7 +77,7 @@ class AbstractBlockingQueue {
 
 
         // putOrderedInt wont immediately make the updates available, even on this thread, so will update the field so the change is immediately visible to, at least this thread. ( note the field is non volatile )
-        this.writeLocation = nextWriteLocation;
+        this.producerWriteLocation = nextWriteLocation;
 
         // the line below, is where the write memory barrier occurs,
         // we have just written back the data in the line above ( which is not require to have a memory barrier as we will be doing that in the line below
@@ -80,8 +87,9 @@ class AbstractBlockingQueue {
     }
 
     void setReadLocation(int nextReadLocation) {
+
         // putOrderedInt wont immediately make the updates available, even on this thread, so will update the field so the change is immediately visible to, at least this thread. ( note the field is non volatile )
-        this.readLocation = nextReadLocation;
+        this.consumerReadLocation = nextReadLocation;
 
         // the write memory barrier will occur here, as we are storing the nextReadLocation
         unsafe.putOrderedInt(this, READ_LOCATION_OFFSET, nextReadLocation);
@@ -137,7 +145,7 @@ class AbstractBlockingQueue {
 
 
     /**
-     * The items will be cleared correctly if nothing was added or removed from the queue at the time it was called
+     * The items will be cleared correctly only if nothing was added or removed from the queue at the time it was called
      *
      * @return an approximation of the size
      */
@@ -147,8 +155,8 @@ class AbstractBlockingQueue {
 
 
     /**
-     * This method is not thread safe it therefore only provides and approximation of isEmpty(),
-     * it will be corrected if nothing was added or removed from the queue at the time it was called
+     * This method does not lock, it therefore only provides and approximation of isEmpty(),
+     * it will be correct, if nothing was added or removed from the queue at the time it was called.
      *
      * @return an approximation of isEmpty()
      */

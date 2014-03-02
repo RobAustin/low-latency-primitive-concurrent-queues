@@ -195,7 +195,7 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
     public boolean add(E value) {
 
         // volatile read
-        final int writeLocation = this.writeLocation;
+        final int writeLocation = this.producerWriteLocation;
 
         final int nextWriteLocation = blockForWriteSpace(writeLocation);
 
@@ -217,8 +217,8 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
      */
     public E take() {
 
-        // volatile read
-        final int readLocation = this.readLocation;
+        // non volatile read  ( which is quicker )
+        final int readLocation = this.consumerReadLocation;
 
         // sets the nextReadLocation my moving it on by 1, this may cause it it wrap back to the start.
         final int nextReadLocation = blockForReadSpace(readLocation);
@@ -246,7 +246,8 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
     public E peek(long timeout, TimeUnit unit)
             throws InterruptedException, TimeoutException {
 
-        final int readLocation = this.readLocation;
+        // non volatile read  ( which is quicker )
+        final int readLocation = this.consumerReadLocation;
 
         blockForReadSpace(timeout, unit, readLocation);
 
@@ -272,8 +273,8 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
      */
     public boolean offer(E value) {
 
-        // we want to minimize the number of volatile reads, so we read the writeLocation just once.
-        final int writeLocation = this.writeLocation;
+        // non volatile read  ( which is quicker )
+        final int writeLocation = this.producerWriteLocation;
 
         // sets the nextWriteLocation my moving it on by 1, this may cause it it wrap back to the start.
         final int nextWriteLocation = (writeLocation + 1 == size) ? 0 : writeLocation + 1;
@@ -305,7 +306,7 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
      */
     public void put(E value) throws InterruptedException {
 
-        final int writeLocation1 = this.writeLocation;
+        final int writeLocation1 = this.producerWriteLocation;
         final int nextWriteLocation = blockForWriteSpace(writeLocation1);
 
         // purposely not volatile see the comment below
@@ -335,8 +336,8 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
     public boolean offer(E value, long timeout, TimeUnit unit)
             throws InterruptedException {
 
-        // we want to minimize the number of volatile reads, so we read the writeLocation just once.
-        final int writeLocation = this.writeLocation;
+        // non volatile read  ( which is quicker )
+        final int writeLocation = this.producerWriteLocation;
 
         // sets the nextWriteLocation my moving it on by 1, this may cause it it wrap back to the start.
         final int nextWriteLocation = (writeLocation + 1 == size) ? 0 : writeLocation + 1;
@@ -393,7 +394,7 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
     public E poll(long timeout, TimeUnit unit)
             throws InterruptedException {
 
-        final int readLocation = this.readLocation;
+        final int readLocation = this.consumerReadLocation;
         int nextReadLocation = 0;
         try {
             nextReadLocation = blockForReadSpace(timeout, unit, readLocation);
@@ -401,7 +402,7 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
             return null;
         }
 
-        // purposely not volatile as the read memory barrier occurred above when we read 'writeLocation'
+        // purposely non volatile as the read memory barrier occurred when we read 'writeLocation'
         final E value = data[readLocation];
         setReadLocation(nextReadLocation);
 
@@ -418,7 +419,7 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
      */
     public E poll() {
 
-        final int readLocation = this.readLocation;
+        final int readLocation = this.consumerReadLocation;
 
         // sets the nextReadLocation my moving it on by 1, this may cause it it wrap back to the start.
         final int nextReadLocation = (readLocation + 1 == size) ? 0 : readLocation + 1;
@@ -426,7 +427,7 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
         if (writeLocation == readLocation)
             return null;
 
-        // purposely not volatile as the read memory barrier occurred above when we read 'writeLocation'
+        // purposely not volatile as the read memory barrier occurred when we read 'writeLocation'
         final E value = data[readLocation];
         setReadLocation(nextReadLocation);
 
@@ -590,8 +591,8 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
      */
     int drainTo(E[] target, int maxElements) {
 
-        // we want to minimize the number of volatile reads, so we read the readLocation just once.
-        int readLocation = this.readLocation;
+        // non volatile read  ( which is quicker )
+        int readLocation = this.consumerReadLocation;
 
         int i = 0;
 
