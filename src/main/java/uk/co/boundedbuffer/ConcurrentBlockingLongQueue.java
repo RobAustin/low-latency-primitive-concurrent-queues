@@ -90,40 +90,25 @@ import java.util.concurrent.TimeoutException;
  * <p/>
  * <p/>
  * Usage example, based on a typical producer-consumer scenario.
- * Note that a <tt>BlockingQueue</tt> can safely be used with multiple
- * producers and multiple consumers.
+ * Note that a <tt>BlockingQueue</tt> can ONLY be used with a single
+ * producers and single consumer thead.
  * <pre>
- * class Producer implements Runnable {
- *   private final BlockingQueue queue;
- *   Producer(BlockingQueue q) { queue = q; }
- *   public void run() {
- *     try {
- *       while (true) { queue.put(produce()); }
- *     } catch (InterruptedException ex) { ... handle ...}
- *   }
- *   Object produce() { ... }
- * }
+ *  // writer thread
+ *  Executors.newSingleThreadExecutor().execute(new Runnable() {
  *
- * class Consumer implements Runnable {
- *   private final BlockingQueue queue;
- *   Consumer(BlockingQueue q) { queue = q; }
- *   public void run() {
- *     try {
- *       while (true) { consume(queue.take()); }
- *     } catch (InterruptedException ex) { ... handle ...}
- *   }
- *   void consume(Object x) { ... }
- * }
+ *  @Override
+ *  public void run() {
+ *       queue.add(1);
+ *       }
+ *  });
  *
- * class Setup {
- *   void main() {
- *     BlockingQueue q = new SomeQueueImplementation();
- *     Producer p = new Producer(q);
- *     Consumer c1 = new Consumer(q);
- *     new Thread(p).start();
- *     new Thread(c1).start();
- *   }
- * }
+ *  // reader thread
+ *  Executors.newSingleThreadExecutor().execute(new Runnable() {
+ *  @Override
+ *  public void run() {
+ *           final int value = queue.take();
+ *       }
+ *  });
  * </pre>
  * <p/>
  * <p>Memory consistency effects: As with other concurrent
