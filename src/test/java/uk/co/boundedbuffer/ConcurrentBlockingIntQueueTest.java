@@ -369,13 +369,11 @@ public class ConcurrentBlockingIntQueueTest {
     }
 
 
-
     @Test
     public void testLatency() throws NoSuchFieldException, InterruptedException {
 
-
-        for (int pwr = 2; pwr < 1000; pwr++) {
-            int i = 300000 * pwr;
+        for (int pwr = 2; pwr < 200; pwr++) {
+            int i = (int) Math.pow(2, pwr);
 
 
             final long arrayBlockingQueueStart = System.nanoTime();
