@@ -96,7 +96,7 @@ import java.util.concurrent.TimeoutException;
  *  Executors.newSingleThreadExecutor().execute(new Runnable() {
  *
  *  public void run() {
- *       queue.add(1);
+ *       queue.put(1);
  *       }
  *  });
  *
@@ -177,7 +177,7 @@ public class ConcurrentBlockingIntQueue extends AbstractBlockingQueue {
         // volatile read
         final int writeLocation = this.producerWriteLocation;
 
-        final int nextWriteLocation = blockForWriteSpace(writeLocation);
+        final int nextWriteLocation = getNextWriteLocationThrowIfFull(writeLocation);
 
         // purposely not volatile
         data[writeLocation] = value;
@@ -332,7 +332,7 @@ public class ConcurrentBlockingIntQueue extends AbstractBlockingQueue {
 
             final long timeoutAt = System.nanoTime() + unit.toNanos(timeout);
 
-            while (nextWriteLocation + 1 == readLocation)
+            while (nextWriteLocation == readLocation)
             // this condition handles the case general case where the read is at the start of the backing array and we are at the end,
             // blocks as our backing array is full, we will wait for a read, ( which will cause a change on the read location )
             {

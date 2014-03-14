@@ -23,7 +23,11 @@ public class ConcurrentBlockingIntQueueTest {
         Executors.newSingleThreadExecutor().execute(new Runnable() {
             @Override
             public void run() {
-                queue.add(1);
+                try {
+                    queue.put(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -53,7 +57,7 @@ public class ConcurrentBlockingIntQueueTest {
     @Test
     public void testRead() throws Exception {
         final ConcurrentBlockingIntQueue ConcurrentBlockingIntQueue = new ConcurrentBlockingIntQueue();
-        ConcurrentBlockingIntQueue.add(10);
+        ConcurrentBlockingIntQueue.put(10);
         final int value = ConcurrentBlockingIntQueue.take();
         junit.framework.Assert.assertEquals(10, value);
     }
@@ -61,8 +65,8 @@ public class ConcurrentBlockingIntQueueTest {
     @Test
     public void testRead2() throws Exception {
         final ConcurrentBlockingIntQueue ConcurrentBlockingIntQueue = new ConcurrentBlockingIntQueue();
-        ConcurrentBlockingIntQueue.add(10);
-        ConcurrentBlockingIntQueue.add(11);
+        ConcurrentBlockingIntQueue.put(10);
+        ConcurrentBlockingIntQueue.put(11);
         final int value = ConcurrentBlockingIntQueue.take();
         junit.framework.Assert.assertEquals(10, value);
         final int value1 = ConcurrentBlockingIntQueue.take();
@@ -74,7 +78,7 @@ public class ConcurrentBlockingIntQueueTest {
         final ConcurrentBlockingIntQueue ConcurrentBlockingIntQueue = new ConcurrentBlockingIntQueue();
 
         for (int i = 1; i < 50; i++) {
-            ConcurrentBlockingIntQueue.add(i);
+            ConcurrentBlockingIntQueue.put(i);
             final int value = ConcurrentBlockingIntQueue.take();
             junit.framework.Assert.assertEquals(i, value);
         }
@@ -174,8 +178,9 @@ public class ConcurrentBlockingIntQueueTest {
                     @Override
                     public void run() {
                         for (int i = 1; i < max; i++) {
-                            concurrentBlockingIntQueue.add(i);
+
                             try {
+                                concurrentBlockingIntQueue.put(i);
                                 Thread.sleep((int) (Math.random() * 3));
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
@@ -247,7 +252,7 @@ public class ConcurrentBlockingIntQueueTest {
                     public void run() {
                         try {
                             for (int i = 1; i < nTimes; i++) {
-                                queue.add(i);
+                                queue.put(i);
 
                             }
 

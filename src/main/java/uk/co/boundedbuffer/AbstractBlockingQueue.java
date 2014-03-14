@@ -3,6 +3,7 @@ package uk.co.boundedbuffer;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -61,7 +62,9 @@ class AbstractBlockingQueue {
      * @param size Creates an BlockingQueue with the given (fixed) capacity
      */
     public AbstractBlockingQueue(int size) {
-        this.size = size;
+        if (size == 0)
+            throw new IllegalArgumentException();
+        this.size = size + 1;
     }
 
 
@@ -107,7 +110,7 @@ class AbstractBlockingQueue {
      * @param timeoutAt returns false if the timeoutAt time is reached
      */
     private boolean blockAtTake(long timeoutAt) {
-        return (timeoutAt < System.nanoTime());
+        return timeoutAt > System.nanoTime();
     }
 
     /**
@@ -122,7 +125,7 @@ class AbstractBlockingQueue {
      * @param timeoutAt returns false if the timeoutAt time is reached
      */
     boolean blockAtAdd(long timeoutAt) {
-        return (timeoutAt < System.nanoTime());
+        return timeoutAt > System.nanoTime();
     }
 
 
@@ -164,6 +167,70 @@ class AbstractBlockingQueue {
         return readLocation == writeLocation;
     }
 
+    /**
+     * @param writeLocation the current write location
+     * @return the next write location
+     */
+    int getNextWriteLocationThrowIfFull(int writeLocation) throws IllegalStateException {
+
+        // we want to minimize the number of volatile reads, so we read the writeLocation just once.
+
+        // sets the nextWriteLocation my moving it on by 1, this may cause it it wrap back to the start.
+        final int nextWriteLocation = (writeLocation + 1 == size) ? 0 : writeLocation + 1;
+
+        if (nextWriteLocation == size) {
+
+            if (readLocation == 0)
+                throw new IllegalStateException("queue is full");
+
+        } else if (nextWriteLocation == readLocation)
+            // this condition handles the case general case where the read is at the start of the backing array and we are at the end,
+            // blocks as our backing array is full, we will wait for a read, ( which will cause a change on the read location )
+            throw new IllegalStateException("queue is full");
+
+        return nextWriteLocation;
+    }
+
+
+    /**
+     * @param writeLocation the current write location
+     * @return the next write location
+     */
+    int blockForWriteSpaceInterruptibly(int writeLocation) throws InterruptedException {
+
+        // we want to minimize the number of volatile reads, so we read the writeLocation just once.
+
+        // sets the nextWriteLocation my moving it on by 1, this may cause it it wrap back to the start.
+        final int nextWriteLocation = (writeLocation + 1 == size) ? 0 : writeLocation + 1;
+
+        if (nextWriteLocation == size)
+
+            while (readLocation == 0) {
+
+                if (Thread.interrupted())
+                    throw new InterruptedException();
+
+
+                // // this condition handles the case where writer has caught up with the read,
+                // we will wait for a read, ( which will cause a change on the read location )
+                blockAtAdd();
+
+            }
+        else
+
+
+            while (nextWriteLocation == readLocation) {
+
+                if (Thread.interrupted())
+                    throw new InterruptedException();
+
+                // this condition handles the case general case where the read is at the start of the backing array and we are at the end,
+                // blocks as our backing array is full, we will wait for a read, ( which will cause a change on the read location )
+                blockAtAdd();
+
+            }
+        return nextWriteLocation;
+    }
 
     /**
      * @param writeLocation the current write location
@@ -176,7 +243,7 @@ class AbstractBlockingQueue {
         // sets the nextWriteLocation my moving it on by 1, this may cause it it wrap back to the start.
         final int nextWriteLocation = (writeLocation + 1 == size) ? 0 : writeLocation + 1;
 
-        if (nextWriteLocation == size - 1)
+        if (nextWriteLocation == size)
 
             while (readLocation == 0)
                 // // this condition handles the case where writer has caught up with the read,
@@ -186,7 +253,7 @@ class AbstractBlockingQueue {
         else
 
 
-            while (nextWriteLocation + 1 == readLocation)
+            while (nextWriteLocation == readLocation)
                 // this condition handles the case general case where the read is at the start of the backing array and we are at the end,
                 // blocks as our backing array is full, we will wait for a read, ( which will cause a change on the read location )
                 blockAtAdd();
@@ -203,7 +270,7 @@ class AbstractBlockingQueue {
      * @return
      * @throws TimeoutException
      */
-    public int blockForReadSpace(long timeout, TimeUnit unit, int readLocation) throws TimeoutException {
+    int blockForReadSpace(long timeout, TimeUnit unit, int readLocation) throws TimeoutException {
 
         // sets the nextReadLocation my moving it on by 1, this may cause it it wrap back to the start.
         final int nextReadLocation = (readLocation + 1 == size) ? 0 : readLocation + 1;
@@ -220,7 +287,10 @@ class AbstractBlockingQueue {
         return nextReadLocation;
     }
 
+
     /**
+     * /**
+     *
      * @param readLocation we want to minimize the number of volatile reads, so we read the readLocation just once, and pass it in
      * @return
      */
@@ -236,6 +306,27 @@ class AbstractBlockingQueue {
 
         return nextReadLocation;
     }
+
+
+    /**
+     * /**
+     *
+     * @param readLocation we want to minimize the number of volatile reads, so we read the readLocation just once, and pass it in
+     * @return
+     */
+    int blockForReadSpaceThrowNoSuchElementException(int readLocation) {
+
+        // sets the nextReadLocation my moving it on by 1, this may cause it it wrap back to the start.
+        final int nextReadLocation = (readLocation + 1 == size) ? 0 : readLocation + 1;
+
+        // in the for loop below, we are blocked reading unit another item is written, this is because we are empty ( aka size()=0)
+        // inside the for loop, getting the 'writeLocation', this will serve as our read memory barrier.
+        while (writeLocation == readLocation)
+            throw new NoSuchElementException();
+
+        return nextReadLocation;
+    }
+
 
     /**
      * Returns the number of additional elements that this queue can ideally
@@ -258,8 +349,10 @@ class AbstractBlockingQueue {
         if (writeLocation < readLocation)
             writeLocation += size;
 
-        return writeLocation - readLocation;
+
+        return (size - 1) - (writeLocation - readLocation);
     }
+
 
 }
 

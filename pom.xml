@@ -14,7 +14,8 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>uk.co.boundedbuffer</groupId>
@@ -186,47 +187,6 @@
                 </executions>
             </plugin>
 
-            <plugin>
-
-                <groupId>com.sun.japex</groupId>
-                <artifactId>japex-maven-plugin</artifactId>
-                <version>1.2.4</version>
-                <executions>
-                    <execution>
-                        <id>japex</id>
-                        <goals>
-                            <goal>japex</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <japexConfig>
-                        <testSuite xmlns="http://www.sun.com/japex/testSuite" name="ParsingPerformance">
-                            <param name="japex.namedClassPath" value="maven.test.classpath" />
-                            <param name="japex.resultUnit" value="ms" />
-                            <param name="japex.warmupIterations" value="0" />
-                            <param name="japex.runIterations" value="1000" />
-                            <param name="japex.numberOfThreads" value="4" />
-                            <param name="japex.chartType" value="linechart" />
-                            <param name="japex.numberOfCpus" value="4" />
-                            <param name="japex.resultUnit" value="ms" />
-
-                            <driver name="ConcurrentBlockingIntQueue">
-                                <param name="japex.driverClass" value="uk.co.boundedbuffer.ConcurrentBlockingIntQueueJapexDriver" />
-                                <param name="description" value="Memory usage sample class" />
-
-                            </driver>
-                            <driver name="ArrayBlockingQueue">
-                                <param name="japex.driverClass" value="uk.co.boundedbuffer.ArrayBlockingQueueJapexDriver" />
-                                <param name="description" value="Array Blocking Queue" />
-
-                            </driver>
-                            <testCase name="test1" />
-
-                        </testSuite>
-                    </japexConfig>
-                </configuration>
-            </plugin>
         </plugins>
 
     </build>

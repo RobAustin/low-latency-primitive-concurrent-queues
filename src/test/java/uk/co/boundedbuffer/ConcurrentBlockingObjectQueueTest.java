@@ -24,7 +24,11 @@ public class ConcurrentBlockingObjectQueueTest {
         Executors.newSingleThreadExecutor().execute(new Runnable() {
             @Override
             public void run() {
-                queue.add(1);
+                try {
+                    queue.put(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -34,8 +38,13 @@ public class ConcurrentBlockingObjectQueueTest {
         Executors.newSingleThreadExecutor().execute(new Runnable() {
             @Override
             public void run() {
-                final int value = queue.take();
-                actual.add(value);
+                final int value;
+                try {
+                    value = queue.take();
+                    actual.add(value);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
             }
         });
@@ -54,7 +63,7 @@ public class ConcurrentBlockingObjectQueueTest {
     @Test
     public void testRead() throws Exception {
         final ConcurrentBlockingObjectQueue<Integer> queue = new ConcurrentBlockingObjectQueue<Integer>();
-        queue.add(10);
+        queue.put(10);
         final int value = queue.take();
         junit.framework.Assert.assertEquals(10, value);
     }
@@ -62,8 +71,8 @@ public class ConcurrentBlockingObjectQueueTest {
     @Test
     public void testRead2() throws Exception {
         final ConcurrentBlockingObjectQueue<Integer> queue = new ConcurrentBlockingObjectQueue<Integer>();
-        queue.add(10);
-        queue.add(11);
+        queue.put(10);
+        queue.put(11);
         final int value = queue.take();
         junit.framework.Assert.assertEquals(10, value);
         final int value1 = queue.take();
@@ -75,7 +84,7 @@ public class ConcurrentBlockingObjectQueueTest {
         final ConcurrentBlockingObjectQueue<Integer> queue = new ConcurrentBlockingObjectQueue<Integer>();
 
         for (int i = 1; i < 50; i++) {
-            queue.add(i);
+            queue.put(i);
             final int value = queue.take();
             junit.framework.Assert.assertEquals(i, value);
         }
@@ -102,8 +111,8 @@ public class ConcurrentBlockingObjectQueueTest {
                     @Override
                     public void run() {
                         for (int i = 1; i < max; i++) {
-                            queue.add(i);
                             try {
+                                queue.put(i);
                                 Thread.sleep((int) (Math.random() * 100));
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
@@ -122,24 +131,21 @@ public class ConcurrentBlockingObjectQueueTest {
 
                         int value = 0;
                         for (int i = 1; i < max; i++) {
-
-                            final int newValue = queue.take();
                             try {
+
+                                final int newValue = queue.take();
+
                                 junit.framework.Assert.assertEquals(i, newValue);
-                            } catch (Error e) {
-                                System.out.println("value=" + newValue);
-
-                            }
 
 
-                            if (newValue != value + 1) {
-                                success.set(false);
-                                return;
-                            }
+                                if (newValue != value + 1) {
+                                    success.set(false);
+                                    return;
+                                }
 
-                            value = newValue;
+                                value = newValue;
 
-                            try {
+
                                 Thread.sleep((int) (Math.random() * 10));
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
@@ -175,8 +181,9 @@ public class ConcurrentBlockingObjectQueueTest {
                     @Override
                     public void run() {
                         for (int i = 1; i < max; i++) {
-                            queue.add(i);
                             try {
+                                queue.put(i);
+
                                 Thread.sleep((int) (Math.random() * 3));
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
@@ -196,23 +203,20 @@ public class ConcurrentBlockingObjectQueueTest {
                         int value = 0;
                         for (int i = 1; i < max; i++) {
 
-                            final int newValue = queue.take();
                             try {
+                                final int newValue = queue.take();
+
                                 junit.framework.Assert.assertEquals(i, newValue);
-                            } catch (Error e) {
-                                System.out.println("value=" + newValue);
-
-                            }
 
 
-                            if (newValue != value + 1) {
-                                success.set(false);
-                                return;
-                            }
+                                if (newValue != value + 1) {
+                                    success.set(false);
+                                    return;
+                                }
 
-                            value = newValue;
+                                value = newValue;
 
-                            try {
+
                                 Thread.sleep((int) (Math.random() * 10));
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
@@ -249,7 +253,7 @@ public class ConcurrentBlockingObjectQueueTest {
                     public void run() {
                         try {
                             for (int i = 1; i < nTimes; i++) {
-                                queue.add(i);
+                                queue.put(i);
 
                             }
 
@@ -272,15 +276,20 @@ public class ConcurrentBlockingObjectQueueTest {
                         int value = 0;
                         for (int i = 1; i < nTimes; i++) {
 
-                            final int newValue = queue.take();
+                            final int newValue;
+                            try {
+                                newValue = queue.take();
 
 
-                            if (newValue != value + 1) {
-                                success.set(false);
-                                return;
+                                if (newValue != value + 1) {
+                                    success.set(false);
+                                    return;
+                                }
+
+                                value = newValue;
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
                             }
-
-                            value = newValue;
 
                         }
                         countDown.countDown();

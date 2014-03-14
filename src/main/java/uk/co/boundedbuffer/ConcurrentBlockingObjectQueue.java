@@ -2,6 +2,7 @@ package uk.co.boundedbuffer;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -99,7 +100,7 @@ import java.util.concurrent.TimeoutException;
  *  Executors.newSingleThreadExecutor().execute(new Runnable() {
  *
  *  public void run() {
- *       queue.add(1);
+ *       queue.put(1);
  *       }
  *  });
  *
@@ -158,30 +159,24 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
         super(size);
     }
 
+    public ConcurrentBlockingObjectQueue(int size, boolean b) {
+        super(size);
+    }
+
+
+    public ConcurrentBlockingObjectQueue(int size, boolean b, Collection<Integer> elements) {
+        super(size);
+    }
+
     /**
-     * Inserts the specified element into this queue if it is possible to do
-     * so immediately without violating capacity restrictions, returning
-     * <tt>true</tt> upon success and throwing an
-     * <tt>IllegalStateException</tt> if no space is currently available.
-     * When using a capacity-restricted queue, it is generally preferable to
-     * use {@link #offer(E) offer}.
-     *
-     * @param value the element to add
-     * @return <tt>true</tt> (as specified by {@link java.util.Collection#add})
-     * @throws IllegalStateException    if the element cannot be added at this
-     *                                  time due to capacity restrictions
-     * @throws ClassCastException       if the class of the specified element
-     *                                  prevents it from being added to this queue
-     * @throws NullPointerException     if the specified element is null
-     * @throws IllegalArgumentException if some property of the specified
-     *                                  element prevents it from being added to this queue
+     * {@inheritDoc}
      */
     public boolean add(E value) {
 
         // volatile read
         final int writeLocation = this.producerWriteLocation;
 
-        final int nextWriteLocation = blockForWriteSpace(writeLocation);
+        final int nextWriteLocation = getNextWriteLocationThrowIfFull(writeLocation);
 
         // purposely not volatile
         data[writeLocation] = value;
@@ -199,7 +194,7 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
      * @return the head of this queue
      * @throws InterruptedException if interrupted while waiting
      */
-    public E take() {
+    public E take() throws InterruptedException {
 
         // non volatile read  ( which is quicker )
         final int readLocation = this.consumerReadLocation;
@@ -241,19 +236,7 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
     }
 
     /**
-     * Inserts the specified element into this queue if it is possible to do
-     * so immediately without violating capacity restrictions, returning
-     * <tt>true</tt> upon success and <tt>false</tt> if no space is currently
-     * available.  When using a capacity-restricted queue, this method is
-     * generally preferable to {@link #add}, which can fail to insert an
-     * element only by throwing an exception.
-     *
-     * @param value the element to add
-     * @return <tt>true</tt> if the element was added to this queue, else
-     * <tt>false</tt>
-     * @throws NullPointerException     if the specified element is null
-     * @throws IllegalArgumentException if some property of the specified
-     *                                  element prevents it from being added to this queue
+     * {@inheritDoc}
      */
     public boolean offer(E value) {
 
@@ -263,12 +246,12 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
         // sets the nextWriteLocation my moving it on by 1, this may cause it it wrap back to the start.
         final int nextWriteLocation = (writeLocation + 1 == size) ? 0 : writeLocation + 1;
 
-        if (nextWriteLocation == size - 1) {
+        if (nextWriteLocation == size) {
 
             if (readLocation == 0)
                 return false;
 
-        } else if (nextWriteLocation + 1 == readLocation)
+        } else if (nextWriteLocation == readLocation)
             return false;
 
         // purposely not volatile see the comment below
@@ -291,7 +274,7 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
     public void put(E value) throws InterruptedException {
 
         final int writeLocation1 = this.producerWriteLocation;
-        final int nextWriteLocation = blockForWriteSpace(writeLocation1);
+        final int nextWriteLocation = blockForWriteSpaceInterruptibly(writeLocation1);
 
         // purposely not volatile see the comment below
         data[writeLocation1] = value;
@@ -327,7 +310,7 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
         final int nextWriteLocation = (writeLocation + 1 == size) ? 0 : writeLocation + 1;
 
 
-        if (nextWriteLocation == size - 1) {
+        if (nextWriteLocation == size) {
 
             final long timeoutAt = System.nanoTime() + unit.toNanos(timeout);
 
@@ -343,7 +326,7 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
 
             final long timeoutAt = System.nanoTime() + unit.toNanos(timeout);
 
-            while (nextWriteLocation + 1 == readLocation)
+            while (nextWriteLocation == readLocation)
             // this condition handles the case general case where the read is at the start of the backing array and we are at the end,
             // blocks as our backing array is full, we will wait for a read, ( which will cause a change on the read location )
             {
@@ -426,12 +409,32 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
 
 
     @Override
-    public boolean containsAll(Collection<?> c) {
-        throw new UnsupportedOperationException("not currently supported");
+    public boolean containsAll(Collection<?> items) {
+
+        final int read = readLocation;
+        final int write = writeLocation;
+
+        if (items.size() == 0)
+            return true;
+
+        if (read == write)
+            return false;
+
+        for (Object o : items) {
+            if (!contains(o))
+                return false;
+        }
+
+
+        return true;
+
     }
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
+        if (this.equals(c))
+            throw new IllegalArgumentException();
+
         return false;
     }
 
@@ -448,17 +451,95 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
 
     @Override
     public Iterator<E> iterator() {
-        throw new UnsupportedOperationException("not currently supported");
+
+        final E[] objects = (E[]) toArray();
+
+        return new Iterator<E>() {
+
+            int i = 0;
+
+            @Override
+            public boolean hasNext() {
+                return i < objects.length;
+            }
+
+            @Override
+            public E next() {
+                if (!hasNext())
+                    throw new NoSuchElementException();
+                return objects[i++];
+            }
+
+            @Override
+            public void remove() {
+                i++;
+            }
+        };
+
     }
 
     @Override
     public Object[] toArray() {
-        throw new UnsupportedOperationException("not currently supported");
+
+        final int read = readLocation;
+        final int write = writeLocation;
+
+        if (read == write)
+            return new Object[]{};
+
+        int i = 0;
+
+        if (read < write) {
+            final Object[] objects = new Object[write - read];
+            for (int location = read; location < write; location++) {
+                objects[i++] = data[location];
+            }
+
+            return objects;
+        }
+
+
+        final Object[] objects = new Object[(size - read) + write];
+
+        for (int location = read; location < size; location++) {
+            objects[i++] = data[location];
+        }
+
+        for (int location = 0; location < write; location++) {
+            objects[i++] = data[location];
+        }
+
+        return objects;
     }
 
     @Override
-    public <T> T[] toArray(T[] a) {
-        throw new UnsupportedOperationException("not currently supported");
+    public <T> T[] toArray(T[] result) {
+
+        final int read = readLocation;
+        final int write = writeLocation;
+
+
+        int i = 0;
+
+        if (read < write) {
+            for (int location = read; location <= write; location++) {
+                result[i++] = (T) data[location];
+            }
+
+            return result;
+        }
+
+
+        for (int location = read; location < size; location++) {
+            result[i++] = (T) data[location];
+        }
+
+        for (int location = 0; location <= write; location++) {
+            result[i++] = (T) data[location];
+        }
+
+        return result;
+
     }
 
     @Override
@@ -474,18 +555,47 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
 
     @Override
     public E remove() {
-        throw new UnsupportedOperationException("not currently supported");
+
+        // non volatile read  ( which is quicker )
+        final int readLocation = this.consumerReadLocation;
+
+        // sets the nextReadLocation my moving it on by 1, this may cause it it wrap back to the start.
+        final int nextReadLocation = blockForReadSpaceThrowNoSuchElementException(readLocation);
+
+        // purposely not volatile as the read memory barrier occurred above when we read 'writeLocation'
+        final E value = data[readLocation];
+
+        setReadLocation(nextReadLocation);
+
+        return value;
     }
 
 
     @Override
     public E element() {
-        throw new UnsupportedOperationException("not currently supported");
+
+
+        final int readLocation = this.consumerReadLocation;
+
+        // sets the nextReadLocation my moving it on by 1, this may cause it it wrap back to the start.
+        final int nextReadLocation = (readLocation + 1 == size) ? 0 : readLocation + 1;
+
+        if (writeLocation == readLocation)
+            throw new NoSuchElementException();
+
+        // purposely not volatile as the read memory barrier occurred when we read 'writeLocation'
+        final E value = data[readLocation];
+        setReadLocation(nextReadLocation);
+
+        return value;
+
     }
 
     @Override
     public E peek() {
-        throw new UnsupportedOperationException("not currently supported");
+        if (size() == 0)
+            return null;
+        return data[this.consumerReadLocation];
     }
 
     /**
@@ -504,23 +614,33 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
      */
     public boolean contains(Object o) {
 
-        int readLocation = this.readLocation;
-        int writeLocation = this.writeLocation;
+        int read = this.readLocation;
+        int write = this.writeLocation;
 
-        for (; ; ) {
+        if (read < write) {
 
-            if (readLocation == writeLocation)
-                return false;
+            for (int location = read; location <= write; location++) {
+                if (o.equals(data[location]))
+                    return true;
+            }
 
-            if (o.equals(data[readLocation]))
+            return false;
+        }
+
+        for (int location = read; location < size; location++) {
+
+            if (o.equals(data[location]))
                 return true;
+        }
 
-            // sets the readLocation my moving it on by 1, this may cause it it wrap back to the start.
-            readLocation = (readLocation + 1 == size) ? 0 : readLocation + 1;
+        for (int location = 0; location <= write; location++) {
 
+            if (o.equals(data[location]))
+                return true;
         }
 
 
+        return false;
     }
 
     /**
@@ -612,6 +732,17 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
         setReadLocation(readLocation);
 
         return maxElements;
+    }
+
+    @Override
+    public String toString() {
+
+
+        if (size() == 0) {
+            return "[]";
+        }
+
+        return "todo";
     }
 }
 
