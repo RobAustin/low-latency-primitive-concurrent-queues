@@ -94,7 +94,7 @@ import java.util.concurrent.TimeoutException;
  * <p/>
  * Usage example, based on a typical producer-consumer scenario.
  * Note that a <tt>BlockingQueue</tt> can ONLY be used with a single
- * producers and single consumer thead.
+ * producers and single consumer thread.
  * <pre>
  *
  *  Executors.newSingleThreadExecutor().execute(new Runnable() {
