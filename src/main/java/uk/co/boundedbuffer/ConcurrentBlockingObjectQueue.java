@@ -617,6 +617,10 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
         int read = this.readLocation;
         int write = this.writeLocation;
 
+
+        if (read == write)
+            return false;
+
         if (read < write) {
 
             for (int location = read; location <= write; location++) {
