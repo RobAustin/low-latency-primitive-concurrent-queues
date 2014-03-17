@@ -23,7 +23,7 @@ import java.util.concurrent.TimeoutException;
  * operations obtain elements at the head of the queue.
  * <p/>
  * <p>This is a classic &quot;bounded buffer&quot;, in which a
- * fixed-sized array holds elements inserted by producers and
+ * fixed-capacityd array holds elements inserted by producers and
  * extracted by consumers.  Once created, the capacity cannot be
  * changed.  Attempts to {@link #put put(e)} an element into a full queue
  * will result in the operation blocking; attempts to {@link #take take()} an
@@ -138,7 +138,7 @@ import java.util.concurrent.TimeoutException;
 public class ConcurrentBlockingLongQueue extends AbstractBlockingQueue {
 
     // intentionally not volatile, as we are carefully ensuring that the memory barriers are controlled below by other objects
-    private final long[] data = new long[size];
+    private final long[] data = new long[capacity];
 
     /**
      * Creates an BlockingQueue with the default capacity of 1024
@@ -148,10 +148,10 @@ public class ConcurrentBlockingLongQueue extends AbstractBlockingQueue {
     }
 
     /**
-     * @param size Creates an BlockingQueue with the given (fixed) capacity
+     * @param capacity Creates an BlockingQueue with the given (fixed) capacity
      */
-    public ConcurrentBlockingLongQueue(int size) {
-        super(size);
+    public ConcurrentBlockingLongQueue(int capacity) {
+        super(capacity);
     }
 
     /**
@@ -254,9 +254,9 @@ public class ConcurrentBlockingLongQueue extends AbstractBlockingQueue {
         final int writeLocation = this.producerWriteLocation;
 
         // sets the nextWriteLocation my moving it on by 1, this may cause it it wrap back to the start.
-        final int nextWriteLocation = (writeLocation + 1 == size) ? 0 : writeLocation + 1;
+        final int nextWriteLocation = (writeLocation + 1 == capacity) ? 0 : writeLocation + 1;
 
-        if (nextWriteLocation == size - 1) {
+        if (nextWriteLocation == capacity - 1) {
 
             if (readLocation == 0)
                 return false;
@@ -316,10 +316,10 @@ public class ConcurrentBlockingLongQueue extends AbstractBlockingQueue {
         final int writeLocation = this.producerWriteLocation;
 
         // sets the nextWriteLocation my moving it on by 1, this may cause it it wrap back to the start.
-        final int nextWriteLocation = (writeLocation + 1 == size) ? 0 : writeLocation + 1;
+        final int nextWriteLocation = (writeLocation + 1 == capacity) ? 0 : writeLocation + 1;
 
 
-        if (nextWriteLocation == size - 1) {
+        if (nextWriteLocation == capacity - 1) {
 
             final long timeoutAt = System.nanoTime() + unit.toNanos(timeout);
 
@@ -409,7 +409,7 @@ public class ConcurrentBlockingLongQueue extends AbstractBlockingQueue {
                 return true;
 
             // sets the readLocation my moving it on by 1, this may cause it it wrap back to the start.
-            readLocation = (readLocation + 1 == size) ? 0 : readLocation + 1;
+            readLocation = (readLocation + 1 == capacity) ? 0 : readLocation + 1;
 
         }
 
@@ -418,7 +418,7 @@ public class ConcurrentBlockingLongQueue extends AbstractBlockingQueue {
 
     /**
      * Removes all available elements from this queue and adds them
-     * to the given array. If the target array is smaller than the number of elements then the number of elements read will equal the size of the array.
+     * to the given array. If the target array is smaller than the number of elements then the number of elements read will equal the capacity of the array.
      * This operation may be more
      * efficient than repeatedly polling this queue.  A failure
      * encountered while attempting to add elements to
@@ -478,7 +478,7 @@ public class ConcurrentBlockingLongQueue extends AbstractBlockingQueue {
 
         do {
 
-            // in the for loop below, we are blocked reading unit another item is written, this is because we are empty ( aka size()=0)
+            // in the for loop below, we are blocked reading unit another item is written, this is because we are empty ( aka capacity()=0)
             // inside the for loop, getting the 'writeLocation', this will serve as our read memory barrier.
             if (writeLocation == readLocation) {
 
@@ -494,7 +494,7 @@ public class ConcurrentBlockingLongQueue extends AbstractBlockingQueue {
 
 
             // sets the nextReadLocation my moving it on by 1, this may cause it it wrap back to the start.
-            readLocation = (readLocation + 1 == size) ? 0 : readLocation + 1;
+            readLocation = (readLocation + 1 == capacity) ? 0 : readLocation + 1;
 
             // purposely not volatile as the read memory barrier occurred above when we read 'writeLocation'
             target[i] = data[readLocation];

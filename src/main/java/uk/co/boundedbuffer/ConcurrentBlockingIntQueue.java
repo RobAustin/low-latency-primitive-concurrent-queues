@@ -137,7 +137,7 @@ import java.util.concurrent.TimeoutException;
 public class ConcurrentBlockingIntQueue extends AbstractBlockingQueue {
 
     // intentionally not volatile, as we are carefully ensuring that the memory barriers are controlled below by other objects
-    private final int[] data = new int[size];
+    private final int[] data = new int[capacity];
 
 
     /**
@@ -256,9 +256,9 @@ public class ConcurrentBlockingIntQueue extends AbstractBlockingQueue {
         final int writeLocation = this.producerWriteLocation;
 
         // sets the nextWriteLocation my moving it on by 1, this may cause it it wrap back to the start.
-        final int nextWriteLocation = (writeLocation + 1 == size) ? 0 : writeLocation + 1;
+        final int nextWriteLocation = (writeLocation + 1 == capacity) ? 0 : writeLocation + 1;
 
-        if (nextWriteLocation == size - 1) {
+        if (nextWriteLocation == capacity - 1) {
 
             if (readLocation == 0)
                 return false;
@@ -313,10 +313,10 @@ public class ConcurrentBlockingIntQueue extends AbstractBlockingQueue {
         final int writeLocation = this.producerWriteLocation;
 
         // sets the nextWriteLocation my moving it on by 1, this may cause it it wrap back to the start.
-        final int nextWriteLocation = (writeLocation + 1 == size) ? 0 : writeLocation + 1;
+        final int nextWriteLocation = (writeLocation + 1 == capacity) ? 0 : writeLocation + 1;
 
 
-        if (nextWriteLocation == size - 1) {
+        if (nextWriteLocation == capacity - 1) {
 
             final long timeoutAt = System.nanoTime() + unit.toNanos(timeout);
 
@@ -406,7 +406,7 @@ public class ConcurrentBlockingIntQueue extends AbstractBlockingQueue {
                 return true;
 
             // sets the readLocation my moving it on by 1, this may cause it it wrap back to the start.
-            readLocation = (readLocation + 1 == size) ? 0 : readLocation + 1;
+            readLocation = (readLocation + 1 == capacity) ? 0 : readLocation + 1;
 
         }
 
@@ -491,7 +491,7 @@ public class ConcurrentBlockingIntQueue extends AbstractBlockingQueue {
 
 
             // sets the nextReadLocation my moving it on by 1, this may cause it it wrap back to the start.
-            readLocation = (readLocation + 1 == size) ? 0 : readLocation + 1;
+            readLocation = (readLocation + 1 == capacity) ? 0 : readLocation + 1;
 
             // purposely not volatile as the read memory barrier occurred above when we read 'writeLocation'
             target[i] = data[readLocation];

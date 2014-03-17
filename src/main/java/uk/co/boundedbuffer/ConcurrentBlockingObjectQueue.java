@@ -1,5 +1,6 @@
 package uk.co.boundedbuffer;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -26,7 +27,7 @@ import java.util.concurrent.TimeoutException;
  * operations obtain elements at the head of the queue.
  * <p/>
  * <p>This is a classic &quot;bounded buffer&quot;, in which a
- * fixed-sized array holds elements inserted by producers and
+ * fixed-capacityd array holds elements inserted by producers and
  * extracted by consumers.  Once created, the capacity cannot be
  * changed.  Attempts to {@link #put put(e)} an element into a full queue
  * will result in the operation blocking; attempts to {@link #take take()} an
@@ -142,7 +143,7 @@ import java.util.concurrent.TimeoutException;
 public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue implements BlockingQueue<E> {
 
     // intentionally not volatile, as we are carefully ensuring that the memory barriers are controlled below by other objects
-    private final E[] data = (E[]) new Object[size];
+    private final E[] data = (E[]) new Object[capacity];
 
 
     /**
@@ -153,19 +154,19 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
     }
 
     /**
-     * @param size Creates an BlockingQueue with the given (fixed) capacity
+     * @param capacity Creates an BlockingQueue with the given (fixed) capacity
      */
-    public ConcurrentBlockingObjectQueue(int size) {
-        super(size);
+    public ConcurrentBlockingObjectQueue(int capacity) {
+        super(capacity);
     }
 
-    public ConcurrentBlockingObjectQueue(int size, boolean b) {
-        super(size);
+    public ConcurrentBlockingObjectQueue(int capacity, boolean b) {
+        super(capacity);
     }
 
 
-    public ConcurrentBlockingObjectQueue(int size, boolean b, Collection<Integer> elements) {
-        super(size);
+    public ConcurrentBlockingObjectQueue(int capacity, boolean b, Collection<Integer> elements) {
+        super(capacity);
     }
 
     /**
@@ -244,9 +245,9 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
         final int writeLocation = this.producerWriteLocation;
 
         // sets the nextWriteLocation my moving it on by 1, this may cause it it wrap back to the start.
-        final int nextWriteLocation = (writeLocation + 1 == size) ? 0 : writeLocation + 1;
+        final int nextWriteLocation = (writeLocation + 1 == capacity) ? 0 : writeLocation + 1;
 
-        if (nextWriteLocation == size) {
+        if (nextWriteLocation == capacity) {
 
             if (readLocation == 0)
                 return false;
@@ -307,10 +308,10 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
         final int writeLocation = this.producerWriteLocation;
 
         // sets the nextWriteLocation my moving it on by 1, this may cause it it wrap back to the start.
-        final int nextWriteLocation = (writeLocation + 1 == size) ? 0 : writeLocation + 1;
+        final int nextWriteLocation = (writeLocation + 1 == capacity) ? 0 : writeLocation + 1;
 
 
-        if (nextWriteLocation == size) {
+        if (nextWriteLocation == capacity) {
 
             final long timeoutAt = System.nanoTime() + unit.toNanos(timeout);
 
@@ -389,7 +390,7 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
         final int readLocation = this.consumerReadLocation;
 
         // sets the nextReadLocation my moving it on by 1, this may cause it it wrap back to the start.
-        final int nextReadLocation = (readLocation + 1 == size) ? 0 : readLocation + 1;
+        final int nextReadLocation = (readLocation + 1 == capacity) ? 0 : readLocation + 1;
 
         if (writeLocation == readLocation)
             return null;
@@ -404,7 +405,59 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
 
     @Override
     public boolean remove(Object o) {
-        throw new UnsupportedOperationException("not currently supported");
+
+        final E[] newData = (E[]) new Object[capacity];
+
+        boolean hasRemovedItem = false;
+        int read = this.readLocation;
+        int write = this.writeLocation;
+
+        if (read == write)
+            return false;
+
+        int i = 0;
+        if (read < write) {
+
+            for (int location = read; location <= write; location++) {
+                if (o.equals(data[location])) {
+                    hasRemovedItem = true;
+                } else {
+                    newData[i++] = data[location];
+                }
+            }
+
+
+        } else {
+
+            for (int location = read; location < capacity; location++) {
+
+                if (!o.equals(data[location])) {
+                    hasRemovedItem = true;
+                } else {
+                    newData[i++] = data[location];
+                }
+
+            }
+
+            for (int location = 0; location <= write; location++) {
+
+                if (!o.equals(data[location])) {
+                    hasRemovedItem = true;
+                } else {
+                    newData[i++] = data[location];
+                }
+            }
+        }
+
+        if (!hasRemovedItem)
+            return false;
+
+        this.readLocation = 0;
+        this.writeLocation = i;
+        System.arraycopy(newData, 0, data, 0, i);
+
+        return true;
+
     }
 
 
@@ -432,20 +485,152 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
+
+        if (this.capacity <= 1)
+            throw new NullPointerException("You can not add to a queue of Zero Size.");
+
         if (this.equals(c))
             throw new IllegalArgumentException();
 
-        return false;
+        // volatile read
+        final int writeLocation = this.producerWriteLocation;
+        int writeLocation0 = writeLocation;
+        int nextWriteLocation = -1;
+
+        for (E e : c) {
+
+            if (e == null)
+                throw new NullPointerException("Element to be added, can not be null.");
+
+            nextWriteLocation = getNextWriteLocationThrowIfFull(writeLocation0);
+
+            // purposely not volatile
+            data[writeLocation0] = e;
+            writeLocation0 = nextWriteLocation;
+        }
+
+        if (nextWriteLocation != -1)
+            setWriteLocation(nextWriteLocation);
+        else
+            return false;
+
+
+        return true;
+
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        throw new UnsupportedOperationException("not currently supported");
+        final E[] newData = (E[]) new Object[capacity];
+
+        boolean hasRemovedItem = false;
+        int read = this.readLocation;
+        int write = this.writeLocation;
+
+        if (read == write)
+            return false;
+
+        int i = 0;
+        if (read < write) {
+
+            for (int location = read; location < write; location++) {
+                if (c.contains(data[location])) {
+                    hasRemovedItem = true;
+                } else {
+                    newData[i++] = data[location];
+                }
+            }
+
+        } else {
+
+            for (int location = read; location < capacity; location++) {
+
+                if (!c.contains(data[location])) {
+                    hasRemovedItem = true;
+                } else {
+                    newData[i++] = data[location];
+                }
+
+            }
+
+            for (int location = 0; location <= write; location++) {
+
+                if (!c.contains(data[location])) {
+                    hasRemovedItem = true;
+                } else {
+                    newData[i++] = data[location];
+                }
+            }
+        }
+
+        if (!hasRemovedItem)
+            return false;
+
+        this.readLocation = 0;
+        this.writeLocation = i;
+        System.arraycopy(newData, 0, data, 0, i);
+
+        return true;
+
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        throw new UnsupportedOperationException("not currently supported");
+
+        final E[] newData = (E[]) new Object[capacity];
+
+        boolean changed = false;
+        int read = this.readLocation;
+        int write = this.writeLocation;
+
+        if (read == write)
+            return false;
+
+        int i = 0;
+        if (read < write) {
+
+            for (int location = read; location < write; location++) {
+                if (c.contains(data[location])) {
+                    newData[i++] = data[location];
+                } else {
+                    changed = true;
+                }
+            }
+
+        } else {
+
+            for (int location = read; location < capacity; location++) {
+
+                if (c.contains(data[location])) {
+                    newData[i++] = data[location];
+                } else {
+                    changed = true;
+                }
+
+
+            }
+
+            for (int location = 0; location <= write; location++) {
+
+                if (c.contains(data[location])) {
+                    newData[i++] = data[location];
+                } else {
+                    changed = true;
+                }
+            }
+        }
+
+        if (changed) {
+
+            this.readLocation = 0;
+            this.writeLocation = i;
+            System.arraycopy(newData, 0, data, 0, i);
+
+            return true;
+        }
+
+        return false;
+
     }
 
 
@@ -499,9 +684,9 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
         }
 
 
-        final Object[] objects = new Object[(size - read) + write];
+        final Object[] objects = new Object[(capacity - read) + write];
 
-        for (int location = read; location < size; location++) {
+        for (int location = read; location < capacity; location++) {
             objects[i++] = data[location];
         }
 
@@ -515,30 +700,35 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
     @Override
     public <T> T[] toArray(T[] result) {
 
+        //  new ArrayBlockingQueue<Integer>(data)
         final int read = readLocation;
-        final int write = writeLocation;
+        int write = writeLocation;
 
+        if (result.length == 0)
+            return result;
+
+        if (read > write)
+            write += capacity;
+
+        int size = write - read;
+
+        if (size > result.length)
+            result = (T[]) java.lang.reflect.Array.newInstance(
+                    result.getClass().getComponentType(), size + 1);
 
         int i = 0;
 
-        if (read < write) {
-            for (int location = read; location <= write; location++) {
-                result[i++] = (T) data[location];
-            }
-
-            return result;
-        }
-
-
-        for (int location = read; location < size; location++) {
+        for (int location = read; location < write; location++) {
             result[i++] = (T) data[location];
         }
 
-        for (int location = 0; location <= write; location++) {
-            result[i++] = (T) data[location];
+        if (i < result.length - 1) {
+            Arrays.fill((Object[]) result, i, result.length, null);
         }
 
+        // fill with null
         return result;
+
 
     }
 
@@ -578,7 +768,7 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
         final int readLocation = this.consumerReadLocation;
 
         // sets the nextReadLocation my moving it on by 1, this may cause it it wrap back to the start.
-        final int nextReadLocation = (readLocation + 1 == size) ? 0 : readLocation + 1;
+        final int nextReadLocation = (readLocation + 1 == capacity) ? 0 : readLocation + 1;
 
         if (writeLocation == readLocation)
             throw new NoSuchElementException();
@@ -614,6 +804,9 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
      */
     public boolean contains(Object o) {
 
+        if (o == null)
+            throw new NullPointerException("object can not be null");
+
         int read = this.readLocation;
         int write = this.writeLocation;
 
@@ -623,7 +816,7 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
 
         if (read < write) {
 
-            for (int location = read; location <= write; location++) {
+            for (int location = read; location < write; location++) {
                 if (o.equals(data[location]))
                     return true;
             }
@@ -631,13 +824,13 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
             return false;
         }
 
-        for (int location = read; location < size; location++) {
+        for (int location = read; location < capacity; location++) {
 
             if (o.equals(data[location]))
                 return true;
         }
 
-        for (int location = 0; location <= write; location++) {
+        for (int location = 0; location < write; location++) {
 
             if (o.equals(data[location]))
                 return true;
@@ -649,7 +842,7 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
 
     /**
      * Removes all available elements from this queue and adds them
-     * to the given array. If the target array is smaller than the number of elements then the number of elements read will equal the size of the array.
+     * to the given array. If the target array is smaller than the number of elements then the number of elements read will equal the capacity of the array.
      * This operation may be more
      * efficient than repeatedly polling this queue.  A failure
      * encountered while attempting to add elements to
@@ -709,7 +902,7 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
 
         do {
 
-            // in the for loop below, we are blocked reading unit another item is written, this is because we are empty ( aka size()=0)
+            // in the for loop below, we are blocked reading unit another item is written, this is because we are empty ( aka capacity()=0)
             // inside the for loop, getting the 'writeLocation', this will serve as our read memory barrier.
             if (writeLocation == readLocation) {
 
@@ -725,7 +918,7 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
 
 
             // sets the nextReadLocation my moving it on by 1, this may cause it it wrap back to the start.
-            readLocation = (readLocation + 1 == size) ? 0 : readLocation + 1;
+            readLocation = (readLocation + 1 == capacity) ? 0 : readLocation + 1;
 
             // purposely not volatile as the read memory barrier occurred above when we read 'writeLocation'
             target[i] = data[readLocation];
