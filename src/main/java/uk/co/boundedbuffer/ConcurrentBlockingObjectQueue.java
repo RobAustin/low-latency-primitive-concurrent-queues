@@ -935,11 +935,34 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
     public String toString() {
 
 
-        if (size() == 0) {
+        //  new ArrayBlockingQueue<Integer>(data)
+        final int read = readLocation;
+        int write = writeLocation;
+
+        if (read == write) {
             return "[]";
         }
 
-        return "todo";
+        if (read > write)
+            write += capacity;
+
+        int size = write - read;
+
+        StringBuilder builder = new StringBuilder("[");
+
+        int i = 0;
+
+        for (int location = read; location < write; location++) {
+            builder.append(data[location]).append(',');
+        }
+
+
+        builder.deleteCharAt(builder.length() - 1);
+        builder.append("]");
+
+        return builder.toString();
+
+
     }
 }
 
