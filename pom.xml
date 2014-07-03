@@ -20,7 +20,7 @@
 
     <groupId>uk.co.boundedbuffer</groupId>
     <artifactId>low-latency-primitive-concurrent-queues</artifactId>
-    <version>1.0.5-SNAPSHOT</version>
+    <version>1.0.6-SNAPSHOT</version>
 
     <packaging>jar</packaging>
     <name>Low Latency Primitive Concurrent Queues</name>
@@ -47,7 +47,7 @@
         <developerConnection>scm:git:git@github.com:BoundedBuffer/low-latency-primitive-concurrent-queues
         </developerConnection>
         <url>git@github.com:BoundedBuffer/low-latency-primitive-concurrent-queues</url>
-        <tag>low-latency-primitive-concurrent-queues-1.0.2</tag>
+        <tag>master</tag>
     </scm>
 
 
@@ -61,6 +61,25 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
+
+
+    <repositories>
+        <repository>
+            <id>Snapshot Repository</id>
+            <name>Snapshot Repository</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <url>https://oss.sonatype.org/content/repositories/staging</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
 
 
     <dependencies>
