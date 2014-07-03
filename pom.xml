@@ -20,7 +20,7 @@
 
     <groupId>uk.co.boundedbuffer</groupId>
     <artifactId>low-latency-primitive-concurrent-queues</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.3-SNAPSHOT</version>
 
     <packaging>jar</packaging>
     <name>Low Latency Primitive Concurrent Queues</name>
@@ -31,11 +31,14 @@
         however works with primitive ints rather than objects, so is unable to actually implement the
         BlockingQueue.
 
-        This class takes advantage of the Unsafe.putOrderedObject, which allows us to create non-blocking code with
+        This class takes advantage of the Unsafe.putOrderedObject, which allows us to create non-blocking code
+        with
         guaranteed writes.
-        These writes will not be re-orderd by instruction reordering. Under the covers it uses the faster store-store
+        These writes will not be re-orderd by instruction reordering. Under the covers it uses the faster
+        store-store
         barrier, rather than the the slower store-load barrier, which is used when doing a volatile write.
-        One of the trade off with this improved performance is we are limited to a single producer, single consumer.
+        One of the trade off with this improved performance is we are limited to a single producer, single
+        consumer.
     </description>
 
 
@@ -44,7 +47,7 @@
         <developerConnection>scm:git:git@github.com:BoundedBuffer/low-latency-primitive-concurrent-queues
         </developerConnection>
         <url>git@github.com:BoundedBuffer/low-latency-primitive-concurrent-queues</url>
-        <tag>master</tag>
+        <tag>low-latency-primitive-concurrent-queues-1.0.2</tag>
     </scm>
 
 
@@ -58,6 +61,7 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
+
 
     <dependencies>
         <dependency>
@@ -114,11 +118,6 @@
         <pluginManagement>
             <plugins>
 
-                <plugin>
-                    <groupId>com.sun.japex</groupId>
-                    <artifactId>japex-maven-plugin</artifactId>
-                    <version>1.2-SNAPSHOT</version>
-                </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -132,17 +131,74 @@
                     <version>2.9.1</version>
                 </plugin>
 
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>2.2.1</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.1</version>
+                </plugin>
+
+
+                <plugin>
+                    <groupId>com.sun.japex</groupId>
+                    <artifactId>japex-maven-plugin</artifactId>
+                    <version>1.2-SNAPSHOT</version>
+                </plugin>
+
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.1</version>
+                </plugin>
+
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-scm-publish-plugin</artifactId>
                     <version>1.0-beta-2</version>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>2.6</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-bundle-plugin</artifactId>
+                    <version>2.4.0</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.16</version>
+                </plugin>
+
             </plugins>
         </pluginManagement>
 
 
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.3.2</version>
+
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <mavenExecutorId>forked-path</mavenExecutorId>
+                    <useReleaseProfile>false</useReleaseProfile>
+                </configuration>
+
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -164,7 +220,8 @@
                 <artifactId>maven-scm-publish-plugin</artifactId>
                 <configuration>
                     <checkoutDirectory>${project.build.directory}/scmpublish/javadoc</checkoutDirectory>
-                    <checkinComment>Publishing javadoc for ${project.artifactId}:${project.version}</checkinComment>
+                    <checkinComment>Publishing javadoc for ${project.artifactId}:${project.version}
+                    </checkinComment>
                     <content>${project.reporting.outputDirectory}</content>
                     <skipDeletedFiles>true</skipDeletedFiles>
                     <pubScmUrl>scm:git:git@github.com:BoundedBuffer/low-latency-primitive-concurrent-queues
@@ -182,6 +239,31 @@
                         <phase>verify</phase>
                         <goals>
                             <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <compilerArgument>-Xlint:deprecation</compilerArgument>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
