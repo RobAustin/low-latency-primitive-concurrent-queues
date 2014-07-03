@@ -11,29 +11,29 @@ import java.util.concurrent.TimeoutException;
 /**
  * A low latency, lock free, Object bounded blocking queue backed by an Object[].
  * Unlike the other classes in this package thi class implements {@linkplain java.util.concurrent.BlockingQueue BlockingQueue},
- * <p/>
+ * <p>
  * This class takes advantage of the Unsafe.putOrderedObject, which allows us to create non-blocking code with guaranteed writes.
  * These writes will not be re-ordered by instruction reordering. Under the covers it uses the faster store-store barrier, rather than the the slower store-load barrier, which is used when doing a volatile write.
  * One of the trade off with this improved performance is we are limited to a single producer, single consumer.
  * For further information on this see, the blog post <a href="http://robsjava.blogspot.co.uk/2013/06/a-faster-volatile.html">A Faster Volatile</a> by Rob Austin.
- * <p/>
- * <p/>
- * <p/>
+ * <p>
+ * <p>
+ * <p>
  * This queue orders elements FIFO (first-in-first-out).  The
  * <em>head</em> of the queue is that element that has been on the
  * queue the longest time.  The <em>tail</em> of the queue is that
  * element that has been on the queue the shortest time. New elements
  * are inserted at the tail of the queue, and the queue retrieval
  * operations obtain elements at the head of the queue.
- * <p/>
+ * <p>
  * <p>This is a classic &quot;bounded buffer&quot;, in which a
  * fixed-capacityd array holds elements inserted by producers and
  * extracted by consumers.  Once created, the capacity cannot be
  * changed.  Attempts to {@link #put put(e)} an element into a full queue
  * will result in the operation blocking; attempts to {@link #take take()} an
  * element from an empty queue will similarly block.
- * <p/>
- * <p>Due to the lock free nature of its  implementation, ordering works on a first come first served basis.<p/>
+ * <p>
+ * <p>Due to the lock free nature of its  implementation, ordering works on a first come first served basis.<p>
  * Methods come in four forms, with different ways
  * of handling operations that cannot be satisfied immediately, but may be
  * satisfied at some point in the future:
@@ -72,18 +72,18 @@ import java.util.concurrent.TimeoutException;
  * <td>{@link #peek(long, java.util.concurrent.TimeUnit) peek(time, unit)}</td>>
  * </tr>
  * </table>
- * <p/>
- * <p/>
+ * <p>
+ * <p>
  * <p>A <tt>uk.co.boundedbuffer.ConcurrentBlockingEQueue</tt> is capacity bounded. At any given
  * time it may have a <tt>remainingCapacity</tt> beyond which no
  * additional elements can be <tt>put</tt> without blocking.
- * <p/>
+ * <p>
  * <p> It is not possible to remove an arbitrary element from a queue using
  * <tt>remove(x)</tt>. As this operation would not performed very efficiently.
- * <p/>
+ * <p>
  * <p>All of <tt>uk.co.boundedbuffer.ConcurrentBlockingEQueue</tt> methods are thread-safe when used with a single producer and single consumer, internal atomicity
  * is achieved using lock free strategies, such as sping locks.
- * <p/>
+ * <p>
  * <p>Like a <tt>BlockingQueue</tt>, the uk.co.boundedbuffer.ConcurrentBlockingEQueue does <em>not</em> intrinsically support
  * any kind of &quot;close&quot; or &quot;shutdown&quot; operation to
  * indicate that no more items will be added.  The needs and usage of
@@ -91,8 +91,8 @@ import java.util.concurrent.TimeoutException;
  * common tactic is for producers to insert special
  * <em>end-of-stream</em> or <em>poison</em> objects, that are
  * interpreted accordingly when taken by consumers.
- * <p/>
- * <p/>
+ * <p>
+ * <p>
  * Usage example, based on a typical producer-consumer scenario.
  * Note that a <tt>BlockingQueue</tt> can ONLY be used with a single
  * producers and single consumer thread.
@@ -113,24 +113,24 @@ import java.util.concurrent.TimeoutException;
  *       }
  *  });
  * </pre>
- * <p/>
+ * <p>
  * <p>Memory consistency effects: As with other concurrent
  * collections, actions in a thread prior to placing an object into a
  * {@code BlockingQueue}
  * <a href="package-summary.html#MemoryVisibility"><i>happen-before</i></a>
  * actions subsequent to the access or removal of that element from
  * the {@code BlockingQueue} in another thread.
- * <p/>
- * <p/>
- * <p/>
+ * <p>
+ * <p>
+ * <p>
  * Copyright 2014 Rob Austin
- * <p/>
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -189,7 +189,7 @@ public class ConcurrentBlockingObjectQueue<E> extends AbstractBlockingQueue impl
     /**
      * Retrieves and removes the head of this queue, waiting if necessary
      * until an element becomes available.
-     * <p/>
+     * <p>
      * the reads must always occur on the same thread
      *
      * @return the head of this queue
