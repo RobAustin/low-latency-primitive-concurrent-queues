@@ -20,7 +20,7 @@
 
     <groupId>uk.co.boundedbuffer</groupId>
     <artifactId>low-latency-primitive-concurrent-queues</artifactId>
-    <version>1.0.9-SNAPSHOT</version>
+    <version>1.0.9</version>
 
     <packaging>jar</packaging>
     <name>Low Latency Primitive Concurrent Queues</name>
@@ -47,8 +47,39 @@
         <developerConnection>scm:git:git@github.com:BoundedBuffer/low-latency-primitive-concurrent-queues
         </developerConnection>
         <url>scm:git:@github.com:BoundedBuffer/low-latency-primitive-concurrent-queues</url>
-        <tag>master</tag>
+        <tag>low-latency-primitive-concurrent-queues-1.0.9</tag>
     </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>1.9.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+            <scope>test</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.sun.japex</groupId>
+            <artifactId>japex-maven-plugin</artifactId>
+            <version>1.2.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.japex</groupId>
+            <artifactId>japex</artifactId>
+            <version>1.2.4</version>
+            <scope>test</scope>
+        </dependency>
+
+
+    </dependencies>
 
 
     <licenses>
@@ -135,7 +166,7 @@
                     <version>2.0</version>
                 </plugin>
                 <plugin>
-                <artifactId>maven-gpg-plugin</artifactId>
+                    <artifactId>maven-gpg-plugin</artifactId>
                     <version>1.4</version>
                 </plugin>
                 <plugin>
