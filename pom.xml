@@ -20,7 +20,7 @@
 
     <groupId>uk.co.boundedbuffer</groupId>
     <artifactId>low-latency-primitive-concurrent-queues</artifactId>
-    <version>1.0.6-SNAPSHOT</version>
+    <version>1.0.7</version>
 
     <packaging>jar</packaging>
     <name>Low Latency Primitive Concurrent Queues</name>
@@ -47,7 +47,7 @@
         <developerConnection>scm:git:git@github.com:BoundedBuffer/low-latency-primitive-concurrent-queues
         </developerConnection>
         <url>git@github.com:BoundedBuffer/low-latency-primitive-concurrent-queues</url>
-        <tag>master</tag>
+        <tag>low-latency-primitive-concurrent-queues-1.0.7</tag>
     </scm>
 
 
