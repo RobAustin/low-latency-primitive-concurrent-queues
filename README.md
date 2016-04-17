@@ -1,7 +1,7 @@
 ### Faster than ArrayBlockingQueue
 
-![PerformanceComparison](https://raw.github.com/BoundedBuffer/low-latency-primitive-concurrent-queues/master/src/test/resources/performance-comparison.png)
-
+![PerformanceComparison](https://raw.github.com/RobAustin/low-latency-primitive-concurrent-queues/master/src/test/resources/performance-comparison.png)
+ 
 ### Aim
 
 Our aim is to be extremely low latency with near zero [GC](http://www.oracle.com/technetwork/java/javase/gc-tuning-6-140523.html) overhead.
@@ -42,7 +42,7 @@ We are hosted at [Maven Central] (http://search.maven.org), one of the quickest 
 ```
 
 ### JavaDoc
-Having trouble ? Check out our documentation at [JavaDoc] (http://boundedbuffer.github.io/low-latency-primitive-concurrent-queues/apidocs/)
+Having trouble ? Check out our documentation at [JavaDoc] (http://robaustin.github.io/low-latency-primitive-concurrent-queues/apidocs/)
 
 ### Is this Queue Thread Safe ?
 
