@@ -4,10 +4,10 @@
  
 ### Aim
 
-Our aim is to be extremely low latency with near zero [GC](http://www.oracle.com/technetwork/java/javase/gc-tuning-6-140523.html) overhead.
+The aim is to be extremely low latency with near zero [GC](http://www.oracle.com/technetwork/java/javase/gc-tuning-6-140523.html) overhead.
 
 
-An example of how to use on of our low latency bounded queues.
+An example of how to use one of our low latency bounded queues.
 
 ```
 
