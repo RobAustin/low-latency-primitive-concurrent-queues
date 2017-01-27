@@ -384,7 +384,7 @@ public class ConcurrentBlockingObjectQueueTest {
     public void testLatency() throws NoSuchFieldException, InterruptedException {
 
 
-        for (int pwr = 2; pwr < 200; pwr++) {
+        for (int pwr = 2; pwr < 20; pwr++) {
             int i = (int) Math.pow(2, pwr);
 
 
